@@ -1,0 +1,33 @@
+# Cube.dev Semantic Layer Model: Date Cube
+# File: Date.yml
+cubes:
+  - name: Date
+    sql_table: marts.core.dim_dates
+    description: "Governed calendar and fiscal time dimension hierarchy for standardized temporal aggregations"
+
+    dimensions:
+      - name: date
+        title: "Date"
+        sql: "{CUBE}.calendar_date"
+        type: time
+        primary_key: true
+
+      - name: month
+        title: "Month"
+        sql: "{CUBE}.calendar_month"
+        type: string
+
+      - name: quarter
+        title: "Calendar Quarter"
+        sql: "{CUBE}.calendar_quarter"
+        type: string
+
+      - name: year
+        title: "Year"
+        sql: "{CUBE}.calendar_year"
+        type: number
+
+      - name: fiscal_quarter
+        title: "Fiscal Quarter"
+        sql: "{CUBE}.fiscal_quarter"
+        type: string

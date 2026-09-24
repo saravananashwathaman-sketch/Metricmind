@@ -1,0 +1,34 @@
+# Cube.dev Semantic Layer Model: Orders Cube
+# File: Orders.yml
+cubes:
+  - name: Orders
+    sql_table: marts.sales.fct_orders
+    description: "Governed order fulfillment lifecycle and transactional order header records"
+
+    measures:
+      - name: order_count
+        title: "Order Count"
+        description: "Count of all orders placed"
+        sql: "{CUBE}.order_id"
+        type: count_distinct
+
+    dimensions:
+      - name: order_id
+        sql: "{CUBE}.order_id"
+        type: string
+        primary_key: true
+
+      - name: status
+        title: "Order Status"
+        sql: "{CUBE}.status"
+        type: string
+
+      - name: payment_method
+        title: "Payment Method"
+        sql: "{CUBE}.payment_method"
+        type: string
+
+      - name: fulfillment_tier
+        title: "Fulfillment Tier"
+        sql: "{CUBE}.fulfillment_tier"
+        type: string

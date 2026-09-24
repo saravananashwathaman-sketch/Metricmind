@@ -1,0 +1,32 @@
+# Cube.dev Semantic Layer Model: Customers Cube
+# File: Customers.yml
+cubes:
+  - name: Customers
+    sql_table: marts.core.dim_customers
+    description: "Governed customer entity attributes, enterprise tiers, and account health"
+
+    dimensions:
+      - name: customer_id
+        sql: "{CUBE}.customer_id"
+        type: string
+        primary_key: true
+
+      - name: customer_name
+        title: "Customer Name"
+        sql: "{CUBE}.customer_name"
+        type: string
+
+      - name: customer_segment
+        title: "Customer Segment"
+        sql: "{CUBE}.segment"
+        type: string
+
+      - name: industry
+        title: "Industry"
+        sql: "{CUBE}.industry"
+        type: string
+
+      - name: account_tier
+        title: "Account Tier"
+        sql: "{CUBE}.account_tier"
+        type: string

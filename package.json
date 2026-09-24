@@ -1,0 +1,11 @@
+{
+  "name": "metricmind-root",
+  "version": "1.0.0",
+  "description": "MetricMind — Agentic Semantic BI Engine",
+  "scripts": {
+    "dev": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix frontend",
+    "start": "npm run start --prefix frontend",
+    "backend": "python -m uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload"
+  }
+}

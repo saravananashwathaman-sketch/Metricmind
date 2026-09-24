@@ -1,0 +1,91 @@
+# Cube.dev Semantic Layer Model: Sales Cube
+# File: Sales.yml
+cubes:
+  - name: Sales
+    sql_table: marts.finance.fct_sales
+    description: "Governed core enterprise sales transactions and line-item profitability"
+
+    joins:
+      - name: Orders
+        sql: "{CUBE}.order_id = {Orders}.order_id"
+        relationship: many_to_one
+
+      - name: Customers
+        sql: "{CUBE}.customer_id = {Customers}.customer_id"
+        relationship: many_to_one
+
+      - name: Geography
+        sql: "{CUBE}.region_id = {Geography}.region_id"
+        relationship: many_to_one
+
+      - name: Date
+        sql: "{CUBE}.order_date = {Date}.date"
+        relationship: many_to_one
+
+    measures:
+      - name: revenue
+        title: "Revenue"
+        description: "Total recognized sales revenue across all completed commercial transactions"
+        sql: "{CUBE}.revenue"
+        type: sum
+        format: currency
+
+      - name: cost
+        title: "Cost"
+        description: "Total Cost of Goods Sold (COGS) including direct production, shipping, and fulfillment"
+        sql: "{CUBE}.cost"
+        type: sum
+        format: currency
+
+      - name: gross_profit
+        title: "Gross Profit"
+        description: "Revenue minus direct Cost of Goods Sold"
+        sql: "{revenue} - {cost}"
+        type: number
+        format: currency
+
+      - name: gross_margin
+        title: "Gross Margin"
+        description: "Operational profitability efficiency: ((Revenue - Cost) / Revenue) * 100"
+        sql: "CASE WHEN {revenue} > 0 THEN (({revenue} - {cost}) / {revenue}) * 100.0 ELSE 0.0 END"
+        type: number
+        format: percent
+
+      - name: order_count
+        title: "Order Count"
+        description: "Total unique fulfilled sales orders"
+        sql: "{CUBE}.order_id"
+        type: count_distinct
+
+      - name: average_order_value
+        title: "Average Order Value"
+        description: "Total sales revenue divided by total count of fulfilled orders"
+        sql: "CASE WHEN {order_count} > 0 THEN {revenue} / {order_count} ELSE 0 END"
+        type: number
+        format: currency
+
+    dimensions:
+      - name: sales_id
+        sql: "{CUBE}.sales_id"
+        type: string
+        primary_key: true
+
+      - name: product
+        title: "Product"
+        sql: "{CUBE}.product_name"
+        type: string
+
+      - name: product_category
+        title: "Product Category"
+        sql: "{CUBE}.product_category"
+        type: string
+
+      - name: customer_segment
+        title: "Customer Segment"
+        sql: "{CUBE}.customer_segment"
+        type: string
+
+      - name: sales_channel
+        title: "Sales Channel"
+        sql: "{CUBE}.sales_channel"
+        type: string

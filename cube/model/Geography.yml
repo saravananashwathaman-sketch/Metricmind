@@ -1,0 +1,30 @@
+# Cube.dev Semantic Layer Model: Geography Cube
+# File: Geography.yml
+cubes:
+  - name: Geography
+    sql_table: marts.core.dim_geography
+    description: "Governed geographical dimensions across global operating theaters, countries, and metropolitan hubs"
+
+    dimensions:
+      - name: region_id
+        sql: "{CUBE}.region_id"
+        type: string
+        primary_key: true
+
+      - name: region
+        title: "Region"
+        description: "Operating theater (e.g. Europe, North America, India, APAC)"
+        sql: "{CUBE}.region_name"
+        type: string
+
+      - name: country
+        title: "Country"
+        description: "Sovereign jurisdiction / nation"
+        sql: "{CUBE}.country_name"
+        type: string
+
+      - name: city
+        title: "City"
+        description: "Metropolitan operating hub"
+        sql: "{CUBE}.city_name"
+        type: string
