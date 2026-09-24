@@ -6,7 +6,8 @@ import {
   AuditLog,
   SavedInsight,
   QueryHistoryItem,
-  RogueSimulationResult
+  RogueSimulationResult,
+  UserProfile
 } from "@/types";
 import {
   GOVERNED_METRIC_CATALOG,
@@ -15,7 +16,8 @@ import {
   DEFAULT_LINEAGE_DATA,
   INITIAL_SAVED_INSIGHTS,
   INITIAL_AUDIT_LOGS,
-  INITIAL_QUERY_HISTORY
+  INITIAL_QUERY_HISTORY,
+  DEFAULT_USER_PROFILE
 } from "./mockData";
 
 import { runMetricMindAgent } from "./agentOrchestrator";
@@ -262,6 +264,66 @@ export const api = {
       if (res.ok) return await res.json();
     } catch (e) {}
     return null;
+  },
+
+  async getProfile(): Promise<UserProfile> {
+    try {
+      const res = await fetch("/api/profile", { signal: AbortSignal.timeout(4000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    return DEFAULT_USER_PROFILE;
+  },
+
+  async updateProfile(updates: Partial<UserProfile>): Promise<UserProfile> {
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updates)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return data.profile || data;
+      }
+    } catch (e) {}
+    return { ...DEFAULT_USER_PROFILE, ...updates };
+  },
+
+  async getPreferences(): Promise<{ preferences: UserProfile["preferences"]; notifications: UserProfile["notifications"] }> {
+    try {
+      const res = await fetch("/api/profile/preferences", { signal: AbortSignal.timeout(4000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    return {
+      preferences: DEFAULT_USER_PROFILE.preferences,
+      notifications: DEFAULT_USER_PROFILE.notifications
+    };
+  },
+
+  async updatePreferences(
+    preferences?: Partial<UserProfile["preferences"]>,
+    notifications?: Partial<UserProfile["notifications"]>
+  ): Promise<any> {
+    try {
+      const res = await fetch("/api/profile/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ preferences, notifications })
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    return { success: true };
+  },
+
+  async getActivity(): Promise<any> {
+    try {
+      const res = await fetch("/api/profile/activity", { signal: AbortSignal.timeout(4000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    return {
+      activity: DEFAULT_USER_PROFILE.activity,
+      security: DEFAULT_USER_PROFILE.security
+    };
   }
 };
 

@@ -18,24 +18,54 @@ import { DatabaseAdminView } from "@/components/views/DatabaseAdminView";
 import { SemanticAdminView } from "@/components/views/SemanticAdminView";
 import { TrustCenterView } from "@/components/views/TrustCenterView";
 import { ApiCheckView } from "@/components/views/ApiCheckView";
-import { Role, ExecutiveOverviewData, MetricMindChatResponse } from "@/types";
-import { DEFAULT_OVERVIEW_DATA } from "@/lib/mockData";
+import { ProfileView } from "@/components/views/ProfileView";
+import { Role, ExecutiveOverviewData, MetricMindChatResponse, UserProfile } from "@/types";
+import { DEFAULT_OVERVIEW_DATA, DEFAULT_USER_PROFILE } from "@/lib/mockData";
 import { api } from "@/lib/api";
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState<NavTab>("overview");
+export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab }) {
+  const [activeTab, setActiveTab] = useState<NavTab>(initialTab);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [userRole, setUserRole] = useState<Role>("Executive");
   const [quarter, setQuarter] = useState("Q2 2026");
   const [region, setRegion] = useState("Global");
   const [isDemoMode, setIsDemoMode] = useState(true);
+  const [userProfile, setUserProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
 
   // Cross-view state transfer (e.g. asking a question from Overview jumps to Ask page)
   const [pendingQuestion, setPendingQuestion] = useState<string | undefined>(undefined);
   const [selectedLineageMetric, setSelectedLineageMetric] = useState<string>("gross_margin");
   const [savedInsightIds, setSavedInsightIds] = useState<string[]>(["INS_EUR_001", "INS_REV_002"]);
   const [overviewData, setOverviewData] = useState<ExecutiveOverviewData>(DEFAULT_OVERVIEW_DATA);
+
+  useEffect(() => {
+    // Check initial URL path or popstate
+    if (typeof window !== "undefined") {
+      if (window.location.pathname === "/profile") {
+        setActiveTab("profile");
+      }
+      const handlePopState = () => {
+        if (window.location.pathname === "/profile") {
+          setActiveTab("profile");
+        } else if (window.location.pathname === "/" || window.location.pathname === "") {
+          setActiveTab("overview");
+        }
+      };
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Load profile
+    api.getProfile().then((data) => {
+      if (data) {
+        setUserProfile(data);
+        if (data.role) setUserRole(data.role as Role);
+      }
+    }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     loadOverview();
@@ -89,13 +119,24 @@ export default function Home() {
         activeTab={activeTab}
         onSelectTab={(tab) => {
           setActiveTab(tab);
+          if (tab === "profile") {
+            if (typeof window !== "undefined") window.history.pushState({}, "", "/profile");
+          } else {
+            if (typeof window !== "undefined" && window.location.pathname === "/profile") {
+              window.history.pushState({}, "", "/");
+            }
+          }
           window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         userRole={userRole}
-        onChangeRole={setUserRole}
+        onChangeRole={(role) => {
+          setUserRole(role);
+          setUserProfile((prev) => ({ ...prev, role }));
+        }}
         isDemoMode={isDemoMode}
+        userProfile={userProfile}
       />
 
       {/* Main Workspace Frame */}
@@ -193,6 +234,26 @@ export default function Home() {
               onToggleDemoMode={() => setIsDemoMode(!isDemoMode)}
             />
           )}
+
+          {activeTab === "profile" && (
+            <ProfileView
+              userRole={userRole}
+              isDemoMode={isDemoMode}
+              onAskQuestion={handleAskQuestion}
+              onNavigateTab={(tab) => {
+                setActiveTab(tab);
+                if (tab !== "profile" && typeof window !== "undefined" && window.location.pathname === "/profile") {
+                  window.history.pushState({}, "", "/");
+                }
+              }}
+              onProfileUpdated={(updated) => {
+                setUserProfile(updated);
+                if (updated.role) {
+                  setUserRole(updated.role as Role);
+                }
+              }}
+            />
+          )}
         </main>
       </div>
 
@@ -211,4 +272,8 @@ export default function Home() {
       />
     </div>
   );
+}
+
+export default function Home() {
+  return <MetricMindApp initialTab="overview" />;
 }

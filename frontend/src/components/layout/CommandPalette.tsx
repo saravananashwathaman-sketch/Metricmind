@@ -8,7 +8,8 @@ import {
   ArrowRight,
   GitFork,
   ShieldAlert,
-  X
+  X,
+  User
 } from "lucide-react";
 import { NavTab } from "./Sidebar";
 import { GOVERNED_METRIC_CATALOG } from "@/lib/mockData";
@@ -245,6 +246,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               >
                 <Database className="w-3.5 h-3.5 text-amber-400" />
                 Saved Insights Knowledge Base
+              </button>
+              <button
+                onClick={() => {
+                  onSelectTab("profile");
+                  onClose();
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-800/60 text-xs text-slate-300 text-left"
+              >
+                <User className="w-3.5 h-3.5 text-sky-400" />
+                User Profile & Account Settings
               </button>
             </div>
           </div>

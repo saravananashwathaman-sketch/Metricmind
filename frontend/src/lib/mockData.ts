@@ -5,7 +5,8 @@ import {
   LineageGraphData,
   AuditLog,
   SavedInsight,
-  QueryHistoryItem
+  QueryHistoryItem,
+  UserProfile
 } from "@/types";
 
 export const GOVERNED_METRIC_CATALOG: MetricDefinition[] = [
@@ -595,3 +596,71 @@ export const INITIAL_QUERY_HISTORY: QueryHistoryItem[] = [
     created_at: "2026-09-23 14:12:35"
   }
 ];
+
+export const DEFAULT_USER_PROFILE: UserProfile = {
+  id: "user_001",
+  name: "Rajesh Kapoor",
+  initials: "RK",
+  email: "rajesh.kapoor@metricmind.com",
+  phone: "+91 98765 43210",
+  role: "Executive",
+  title: "Executive Vice President",
+  job_title: "Executive Vice President",
+  department: "Business Analytics",
+  organization: "MetricMind Enterprise",
+  timezone: "Asia/Kolkata",
+  currency: "INR",
+  status: "active",
+  theme: "Dark",
+  language: "English",
+  date_format: "DD/MM/YYYY",
+  default_dashboard: "Executive Analytics",
+  avatar_url: null,
+  account_created: "14 Jan 2025",
+  last_active: "Today (Active Session)",
+  active_sessions_count: 2,
+  two_factor_enabled: true,
+  role_access: {
+    permissions: [
+      "View Executive Dashboard",
+      "Ask MetricMind",
+      "View Business Metrics",
+      "View Analytics",
+      "Save Insights",
+      "View Semantic Catalog"
+    ],
+    restricted: [
+      "Modify Semantic Definitions",
+      "Modify Governance Rules",
+      "Manage Data Sources"
+    ]
+  },
+  preferences: {
+    theme: "dark",
+    language: "English",
+    timezone: "Asia/Kolkata",
+    date_format: "DD/MM/YYYY",
+    default_dashboard: "Executive Analytics",
+    currency: "INR"
+  },
+  notifications: {
+    ai_analysis_completed: true,
+    saved_insight_updates: true,
+    data_source_alerts: true,
+    governance_alerts: true,
+    weekly_executive_summary: false
+  },
+  security: {
+    two_factor_enabled: true,
+    active_sessions: 2,
+    last_login: "Today, 18:42 IST (Chrome macOS)"
+  },
+  activity: {
+    queries_this_month: 128,
+    saved_insights: 14,
+    saved_insights_count: 14,
+    reports_viewed: 36,
+    last_query: "Why did European margins drop last quarter?"
+  }
+};
+

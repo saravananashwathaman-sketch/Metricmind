@@ -19,9 +19,10 @@ import {
   Zap,
   Search,
   Award,
-  Terminal
+  Terminal,
+  Check
 } from "lucide-react";
-import { Role } from "@/types";
+import { Role, UserProfile } from "@/types";
 
 export type NavTab =
   | "overview"
@@ -38,7 +39,8 @@ export type NavTab =
   | "saved"
   | "history"
   | "governance"
-  | "settings";
+  | "settings"
+  | "profile";
 
 interface SidebarProps {
   activeTab: NavTab;
@@ -48,6 +50,7 @@ interface SidebarProps {
   userRole: Role;
   onChangeRole: (role: Role) => void;
   isDemoMode: boolean;
+  userProfile?: UserProfile;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -56,7 +59,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   collapsed,
   onToggleCollapse,
   userRole,
-  isDemoMode
+  isDemoMode,
+  userProfile
 }) => {
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: "overview", label: "Executive Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -207,21 +211,75 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {/* User profile & active role */}
-        <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl bg-slate-900/50 border border-slate-800/60">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-sky-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-            RK
-          </div>
-          {!collapsed && (
-            <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-semibold text-slate-200 truncate">Rajesh Kapoor</span>
-              <div className="flex items-center gap-1">
-                <UserCheck className="w-3 h-3 text-sky-400 shrink-0" />
-                <span className="text-[10px] text-sky-400 truncate">{userRole}</span>
+        {/* User profile & active role (Clickable Profile Card) */}
+        {(() => {
+          const isProfileActive = activeTab === "profile";
+          const displayName = userProfile?.name || "Rajesh Kapoor";
+          const displayInitials = userProfile?.initials || "RK";
+          const displayRole = userRole || userProfile?.role || "Executive";
+          const displayAvatar = userProfile?.avatar_url;
+
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                onSelectTab("profile");
+                if (typeof window !== "undefined") {
+                  window.history.pushState({}, "", "/profile");
+                }
+              }}
+              title={collapsed ? `${displayName} (${displayRole}) — View Profile` : "View Profile"}
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left transition-all group relative cursor-pointer ${
+                isProfileActive
+                  ? "bg-gradient-to-r from-sky-500/20 via-indigo-500/15 to-sky-500/10 border border-sky-500/40 text-sky-200 shadow-md shadow-sky-500/10"
+                  : "bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/70 hover:border-slate-700/80 text-slate-300"
+              }`}
+            >
+              <div className="relative shrink-0">
+                {displayAvatar ? (
+                  <img
+                    src={displayAvatar}
+                    alt={displayName}
+                    className="w-8 h-8 rounded-lg object-cover border border-slate-700/60"
+                  />
+                ) : (
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 via-sky-600 to-emerald-500 flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-sm">
+                    {displayInitials}
+                  </div>
+                )}
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-slate-950" />
               </div>
-            </div>
-          )}
-        </div>
+
+              {!collapsed && (
+                <div className="flex items-center justify-between min-w-0 flex-1">
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-xs font-semibold text-slate-200 truncate group-hover:text-white transition-colors">
+                      {displayName}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <UserCheck className="w-3 h-3 text-sky-400 shrink-0" />
+                      <span className="text-[10px] text-sky-400 truncate font-medium">
+                        {displayRole}
+                      </span>
+                      {isProfileActive && (
+                        <span className="ml-1 text-[9px] px-1 py-0.2 rounded font-semibold bg-sky-500/25 text-sky-300 border border-sky-500/30 flex items-center gap-0.5">
+                          <Check className="w-2.5 h-2.5" /> Active
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <ChevronRight
+                    className={`w-3.5 h-3.5 shrink-0 transition-all ${
+                      isProfileActive
+                        ? "text-sky-400 translate-x-0.5"
+                        : "text-slate-500 group-hover:text-slate-300 group-hover:translate-x-0.5"
+                    }`}
+                  />
+                </div>
+              )}
+            </button>
+          );
+        })()}
 
         {/* Mode Pill */}
         {!collapsed && (

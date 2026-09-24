@@ -1,5 +1,71 @@
 export type Role = "Admin" | "Executive" | "Finance Analyst" | "Sales Analyst";
 
+export interface UserProfileRoleAccess {
+  permissions: string[];
+  restricted: string[];
+}
+
+export interface UserPreferences {
+  theme: "dark" | "light" | "system" | string;
+  language: string;
+  timezone: string;
+  date_format: string;
+  default_dashboard: string;
+  currency: string;
+}
+
+export interface UserNotifications {
+  ai_analysis_completed: boolean;
+  saved_insight_updates: boolean;
+  data_source_alerts: boolean;
+  governance_alerts: boolean;
+  weekly_executive_summary: boolean;
+}
+
+export interface UserSecurity {
+  two_factor_enabled: boolean;
+  active_sessions: number;
+  last_login: string;
+}
+
+export interface UserActivity {
+  queries_this_month: number;
+  saved_insights: number;
+  saved_insights_count: number;
+  reports_viewed: number;
+  last_query: string;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  initials: string;
+  email: string;
+  phone: string;
+  role: Role | string;
+  title?: string;
+  job_title: string;
+  department: string;
+  organization: string;
+  timezone: string;
+  currency: string;
+  status: "active" | "inactive" | string;
+  theme: "Dark" | "Light" | "System" | string;
+  language: string;
+  date_format: string;
+  default_dashboard: string;
+  avatar_url?: string | null;
+  account_created: string;
+  last_active: string;
+  active_sessions_count: number;
+  two_factor_enabled: boolean;
+  role_access: UserProfileRoleAccess;
+  preferences: UserPreferences;
+  notifications: UserNotifications;
+  security: UserSecurity;
+  activity: UserActivity;
+}
+
 export interface AgentStep {
   step_number: number;
   title: string;
