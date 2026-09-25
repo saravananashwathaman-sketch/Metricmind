@@ -27,6 +27,7 @@ interface ChatInterfaceProps {
   initialQuestion?: string;
   onSaveInsight: (res: MetricMindChatResponse) => void;
   onViewLineage: (metricId: string) => void;
+  onExplainNumber?: (metricId: string, period?: string, region?: string, value?: string) => void;
   savedInsightIds: string[];
 }
 
@@ -37,6 +38,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   initialQuestion,
   onSaveInsight,
   onViewLineage,
+  onExplainNumber,
   savedInsightIds
 }) => {
   const [questionInput, setQuestionInput] = useState(initialQuestion || "");
@@ -210,8 +212,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             onSaveInsight={onSaveInsight}
             onAskFollowup={(f) => handleSubmitQuestion(f)}
             onViewLineage={onViewLineage}
+            onExplainNumber={onExplainNumber}
             isSaved={savedInsightIds.includes(currentResponse.conversation_id)}
           />
+
         </div>
       )}
 

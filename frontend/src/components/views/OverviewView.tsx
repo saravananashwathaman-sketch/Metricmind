@@ -12,21 +12,24 @@ import {
   Layers,
   Activity
 } from "lucide-react";
-import { ExecutiveOverviewData, KPICardData } from "@/types";
+import { KPICardData, ExecutiveOverviewData } from "@/types";
 import { Sparkline } from "@/components/charts/Sparkline";
 import { TrendLineChart } from "@/components/charts/TrendLineChart";
 import { ComparisonBarChart } from "@/components/charts/ComparisonBarChart";
+import { ExplainNumberButton } from "@/components/time-machine/ExplainNumberButton";
 
 interface OverviewViewProps {
   data: ExecutiveOverviewData;
   onAskQuestion: (q: string) => void;
   onNavigateTab: (tab: string) => void;
+  onExplainNumber?: (metricId: string, period?: string, region?: string, value?: string) => void;
 }
 
 export const OverviewView: React.FC<OverviewViewProps> = ({
   data,
   onAskQuestion,
-  onNavigateTab
+  onNavigateTab,
+  onExplainNumber
 }) => {
   const { greeting, subtitle, kpis, regional_distribution, revenue_trend, margin_trend, top_products } = data;
 
@@ -48,14 +51,24 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             </p>
           </div>
 
-          <button
-            onClick={() => onAskQuestion("Why did our European margins drop last quarter?")}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-xl shadow-sky-500/25 shrink-0 group"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Ask &quot;Why did European margins drop?&quot;</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => onExplainNumber?.("gross_margin", data.period, data.region, "27.2%")}
+              className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-sky-300 border border-sky-500/30 text-xs font-bold transition-all shadow-lg shrink-0 group"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+              <span>Time Machine: Margin 27.2%</span>
+            </button>
+
+            <button
+              onClick={() => onAskQuestion("Why did our European margins drop last quarter?")}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-xl shadow-sky-500/25 shrink-0 group"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Ask &quot;Why did European margins drop?&quot;</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* Ambient background glow */}
@@ -117,19 +130,29 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 />
               </div>
 
-              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] text-slate-500">
+              <div className="pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px] text-slate-500 gap-1">
                 <span className="truncate font-mono">{kpi.governed_formula}</span>
-                <button
-                  onClick={() => onAskQuestion(`Analyze ${kpi.name} performance in detail`)}
-                  className="text-sky-400 hover:text-sky-300 font-semibold shrink-0 ml-2"
-                >
-                  Analyze →
-                </button>
+                <div className="flex items-center gap-1.5 shrink-0 ml-1">
+                  <ExplainNumberButton
+                    variant="compact"
+                    metricName={kpi.name}
+                    onClick={() =>
+                      onExplainNumber?.(kpi.id, data.period, data.region, kpi.current_value)
+                    }
+                  />
+                  <button
+                    onClick={() => onAskQuestion(`Analyze ${kpi.name} performance in detail`)}
+                    className="text-sky-400 hover:text-sky-300 font-semibold"
+                  >
+                    Analyze →
+                  </button>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
 
       {/* Main Charts & Analytics Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

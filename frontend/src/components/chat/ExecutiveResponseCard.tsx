@@ -17,7 +17,9 @@ import {
   Table,
   Check,
   Copy,
-  GitFork
+  GitFork,
+  History,
+  Clock
 } from "lucide-react";
 import { MetricMindChatResponse } from "@/types";
 import { WaterfallChart } from "@/components/charts/WaterfallChart";
@@ -29,6 +31,7 @@ interface ExecutiveResponseCardProps {
   onSaveInsight: (response: MetricMindChatResponse) => void;
   onAskFollowup: (question: string) => void;
   onViewLineage: (metricId: string) => void;
+  onExplainNumber?: (metricId: string, period?: string, region?: string, value?: string) => void;
   isSaved?: boolean;
 }
 
@@ -37,6 +40,7 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
   onSaveInsight,
   onAskFollowup,
   onViewLineage,
+  onExplainNumber,
   isSaved = false
 }) => {
   const [showCalculationDetails, setShowCalculationDetails] = useState(false);
@@ -87,6 +91,22 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() =>
+                onExplainNumber?.(
+                  governed_metric.id,
+                  kpi_comparison.current_period,
+                  undefined,
+                  String(kpi_comparison.current_value)
+                )
+              }
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-sky-500/20 to-indigo-500/20 hover:from-sky-500/30 hover:to-indigo-500/30 border border-sky-500/40 text-xs font-bold text-sky-300 transition-all shadow-sm group"
+              title="Reconstruct how this value was calculated in MetricMind Time Machine"
+            >
+              <History className="w-3.5 h-3.5 text-sky-400 group-hover:rotate-[-45deg] transition-transform" />
+              <span>Explain This Number</span>
+            </button>
+
+            <button
               onClick={() => onViewLineage(governed_metric.id)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-300 hover:text-sky-300 transition-colors"
               title="View end-to-end data lineage"
@@ -108,6 +128,7 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
               <span>{isSaved ? "Saved to Insights" : "Save Insight"}</span>
             </button>
           </div>
+
         </div>
 
         <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
@@ -185,7 +206,23 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
                 {kpi_comparison.unit === "percentage" ? "%" : ""} ({kpi_comparison.baseline_period})
               </span>
             </div>
+
+            <button
+              onClick={() =>
+                onExplainNumber?.(
+                  governed_metric.id,
+                  kpi_comparison.current_period,
+                  undefined,
+                  String(kpi_comparison.current_value)
+                )
+              }
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/25 text-[11px] font-semibold transition-all mt-2 group"
+            >
+              <Clock className="w-3 h-3 text-sky-400 group-hover:scale-110 transition-transform" />
+              <span>Explain This Number in Time Machine →</span>
+            </button>
           </div>
+
 
           {/* Primary Cost Driver / Regional Lead */}
           <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 space-y-2">

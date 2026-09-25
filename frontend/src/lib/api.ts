@@ -324,6 +324,100 @@ export const api = {
       activity: DEFAULT_USER_PROFILE.activity,
       security: DEFAULT_USER_PROFILE.security
     };
+  },
+
+  // ==========================================
+  // TIME MACHINE ("EXPLAIN THIS NUMBER") APIS
+  // ==========================================
+
+  async getTimeMachineMetric(
+    metricId: string = "gross_margin",
+    version?: string,
+    period?: string,
+    region?: string
+  ): Promise<any> {
+    try {
+      const url = new URL("/api/time-machine/metric/" + metricId, window.location.origin);
+      if (version) url.searchParams.set("version", version);
+      if (period) url.searchParams.set("period", period);
+      if (region) url.searchParams.set("region", region);
+
+      const res = await fetch(url.toString(), { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { reconstructNumber } = await import("./timeMachine");
+    return reconstructNumber({ metricId, version, period, region });
+  },
+
+  async getTimeMachineVersions(metricId: string = "gross_margin"): Promise<any> {
+    try {
+      const res = await fetch(`/api/time-machine/versions/${metricId}`, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { HISTORICAL_METRIC_VERSIONS } = await import("./timeMachine");
+    const versions = HISTORICAL_METRIC_VERSIONS[metricId] || [];
+    return {
+      metric_id: metricId,
+      versions,
+      total_versions: versions.length,
+      current_version: versions[versions.length - 1]?.version || "v2.1"
+    };
+  },
+
+  async getTimeMachineSnapshot(snapshotId: string = "SNAP-2026-Q3-EU-001"): Promise<any> {
+    try {
+      const res = await fetch(`/api/time-machine/snapshot/${snapshotId}`, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { DATA_SNAPSHOT_REGISTRY } = await import("./timeMachine");
+    return DATA_SNAPSHOT_REGISTRY[snapshotId] || DATA_SNAPSHOT_REGISTRY["SNAP-2026-Q3-EU-001"];
+  },
+
+  async getTimeMachineLineage(metricId: string = "gross_margin"): Promise<any> {
+    try {
+      const res = await fetch(`/api/time-machine/lineage/${metricId}`, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { reconstructNumber } = await import("./timeMachine");
+    const recon = reconstructNumber({ metricId });
+    return {
+      metric_id: metricId,
+      lineage: recon.lineage,
+      dependencies: recon.dependency_graph,
+      status: "verified"
+    };
+  },
+
+  async reproduceNumber(metricId: string = "gross_margin", fingerprint?: string): Promise<any> {
+    try {
+      const res = await fetch("/api/time-machine/reproduce", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ metricId, fingerprint }),
+        signal: AbortSignal.timeout(3000)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { reproduceNumber } = await import("./timeMachine");
+    return reproduceNumber(metricId, fingerprint);
+  },
+
+  async compareTimeMachineMoments(
+    metricId: string = "gross_margin",
+    periodA: string = "Q3 2026",
+    periodB: string = "Q3 2025"
+  ): Promise<any> {
+    try {
+      const res = await fetch("/api/time-machine/compare", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ metricId, periodA, periodB }),
+        signal: AbortSignal.timeout(3000)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { compareTwoMoments } = await import("./timeMachine");
+    return compareTwoMoments(metricId, periodA, periodB);
   }
 };
 

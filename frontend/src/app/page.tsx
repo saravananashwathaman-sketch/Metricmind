@@ -19,6 +19,8 @@ import { SemanticAdminView } from "@/components/views/SemanticAdminView";
 import { TrustCenterView } from "@/components/views/TrustCenterView";
 import { ApiCheckView } from "@/components/views/ApiCheckView";
 import { ProfileView } from "@/components/views/ProfileView";
+import { TimeMachineView } from "@/components/views/TimeMachineView";
+import { ExplainNumberModal } from "@/components/time-machine/ExplainNumberModal";
 import { Role, ExecutiveOverviewData, MetricMindChatResponse, UserProfile } from "@/types";
 import { DEFAULT_OVERVIEW_DATA, DEFAULT_USER_PROFILE } from "@/lib/mockData";
 import { api } from "@/lib/api";
@@ -38,6 +40,26 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
   const [selectedLineageMetric, setSelectedLineageMetric] = useState<string>("gross_margin");
   const [savedInsightIds, setSavedInsightIds] = useState<string[]>(["INS_EUR_001", "INS_REV_002"]);
   const [overviewData, setOverviewData] = useState<ExecutiveOverviewData>(DEFAULT_OVERVIEW_DATA);
+
+  // Time Machine ("Explain This Number") Modal State
+  const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
+  const [explainMetricId, setExplainMetricId] = useState("gross_margin");
+  const [explainPeriod, setExplainPeriod] = useState("Q3 2026");
+  const [explainRegion, setExplainRegion] = useState("Europe");
+  const [explainValue, setExplainValue] = useState("27.2%");
+
+  const handleExplainNumber = (
+    mId: string = "gross_margin",
+    per?: string,
+    reg?: string,
+    val?: string
+  ) => {
+    setExplainMetricId(mId);
+    setExplainPeriod(per || quarter || "Q3 2026");
+    setExplainRegion(reg || (region === "Global" ? "Europe" : region));
+    setExplainValue(val || (mId === "gross_margin" ? "27.2%" : "₹48.6 Cr"));
+    setIsExplainModalOpen(true);
+  };
 
   useEffect(() => {
     // Check initial URL path or popstate
@@ -165,6 +187,16 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
               data={overviewData}
               onAskQuestion={handleAskQuestion}
               onNavigateTab={(tab) => setActiveTab(tab as NavTab)}
+              onExplainNumber={handleExplainNumber}
+            />
+          )}
+
+          {activeTab === "time-machine" && (
+            <TimeMachineView
+              onAskQuestion={handleAskQuestion}
+              initialMetricId={explainMetricId}
+              initialPeriod={explainPeriod}
+              initialRegion={explainRegion}
             />
           )}
 
@@ -176,9 +208,11 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
               initialQuestion={pendingQuestion}
               onSaveInsight={handleSaveInsight}
               onViewLineage={handleViewLineage}
+              onExplainNumber={handleExplainNumber}
               savedInsightIds={savedInsightIds}
             />
           )}
+
 
           {activeTab === "trust-center" && (
             <TrustCenterView />
@@ -193,8 +227,12 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
           )}
 
           {activeTab === "analytics" && (
-            <ExecutiveAnalyticsView onAskQuestion={handleAskQuestion} />
+            <ExecutiveAnalyticsView
+              onAskQuestion={handleAskQuestion}
+              onExplainNumber={handleExplainNumber}
+            />
           )}
+
 
           {(activeTab === "metrics" || activeTab === "catalog") && (
             <SemanticCatalogView
@@ -256,6 +294,16 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
           )}
         </main>
       </div>
+
+      {/* Explain This Number — Time Machine Modal */}
+      <ExplainNumberModal
+        isOpen={isExplainModalOpen}
+        onClose={() => setIsExplainModalOpen(false)}
+        metricId={explainMetricId}
+        initialPeriod={explainPeriod}
+        initialRegion={explainRegion}
+        initialValue={explainValue}
+      />
 
       {/* Command Palette Modal (⌘K) */}
       <CommandPalette

@@ -8,6 +8,7 @@ from app.api.lineage import router as lineage_router
 from app.api.governance import router as governance_router
 from app.api.history import router as history_router
 from app.api.insights import router as insights_router
+from app.api.time_machine import router as time_machine_router
 
 app = FastAPI(
     title="MetricMind — Agentic Semantic BI Engine",
@@ -32,6 +33,8 @@ app.include_router(lineage_router)
 app.include_router(governance_router)
 app.include_router(history_router)
 app.include_router(insights_router)
+app.include_router(time_machine_router)
+
 
 @app.get("/")
 async def root():

@@ -461,11 +461,12 @@ export async function runMetricMindAgent(
       governance_status: "Verified"
     },
     suggested_followups: [
+      "Explain this number in Time Machine",
+      "Compare Q3 2026 vs Q3 2025 in Time Machine",
       "Show me European sales",
-      "Show me Q3 Revenue",
-      "Which region has the highest gross margin?",
-      "Decompose our Cost of Goods Sold"
+      "What specific logistics routes caused Spain's cost surge?"
     ]
+
   };
 
   const trace: AgentExecutionTrace = {

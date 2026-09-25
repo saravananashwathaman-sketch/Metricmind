@@ -14,6 +14,7 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
 }) => {
   const prompts = [
     { text: "Why did our European margins drop last quarter?", tag: "Demo Scenario" },
+    { text: "Why is European gross margin 27.2%?", tag: "Time Machine" },
     { text: "What was our revenue growth this year?", tag: "Top-line" },
     { text: "Which region has the highest margin?", tag: "Profitability" },
     { text: "Which products are driving profit?", tag: "Products" },
@@ -22,6 +23,7 @@ export const SuggestedPrompts: React.FC<SuggestedPromptsProps> = ({
     { text: "Show me our churn trend.", tag: "Customer" },
     { text: "Which country has the highest logistics cost?", tag: "Cost Driver" }
   ];
+
 
   return (
     <div className="space-y-2">

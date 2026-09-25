@@ -17,13 +17,16 @@ import {
 import { ComparisonBarChart } from "@/components/charts/ComparisonBarChart";
 import { TrendLineChart } from "@/components/charts/TrendLineChart";
 import { WaterfallChart } from "@/components/charts/WaterfallChart";
+import { ExplainNumberButton } from "@/components/time-machine/ExplainNumberButton";
 
 interface ExecutiveAnalyticsViewProps {
   onAskQuestion: (q: string) => void;
+  onExplainNumber?: (metricId: string, period?: string, region?: string, value?: string) => void;
 }
 
 export const ExecutiveAnalyticsView: React.FC<ExecutiveAnalyticsViewProps> = ({
-  onAskQuestion
+  onAskQuestion,
+  onExplainNumber
 }) => {
   const [selectedQuarter, setSelectedQuarter] = useState("Q2 2026");
   const [selectedRegion, setSelectedRegion] = useState("All");
@@ -100,15 +103,23 @@ export const ExecutiveAnalyticsView: React.FC<ExecutiveAnalyticsViewProps> = ({
                 Q1 2026 (31.4%) → Q2 2026 (27.2%) Decomposition
               </p>
             </div>
-            <button
-              onClick={() => onAskQuestion("Why did our European margins drop last quarter?")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 hover:text-sky-300 border border-sky-500/20 text-xs font-semibold shrink-0 transition-all shadow-sm"
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Ask Agent →</span>
-            </button>
+            <div className="flex items-center gap-2 shrink-0">
+              <ExplainNumberButton
+                variant="compact"
+                metricName="Gross Margin"
+                onClick={() => onExplainNumber?.("gross_margin", selectedQuarter, selectedRegion, "27.2%")}
+              />
+              <button
+                onClick={() => onAskQuestion("Why did our European margins drop last quarter?")}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 hover:text-sky-300 border border-sky-500/20 text-xs font-semibold shrink-0 transition-all shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Ask Agent →</span>
+              </button>
+            </div>
           </div>
           <WaterfallChart data={waterfallData} height="350px" unit="%" />
+
         </div>
 
         {/* Regional Performance Comparison Bar */}
