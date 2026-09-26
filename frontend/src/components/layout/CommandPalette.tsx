@@ -199,6 +199,16 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               </button>
               <button
                 onClick={() => {
+                  onSelectTab("metric-impact");
+                  onClose();
+                }}
+                className="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-800/60 text-xs text-purple-300 text-left"
+              >
+                <span className="w-3.5 h-3.5 text-purple-400 font-bold">🔮</span>
+                Metric Impact Simulator
+              </button>
+              <button
+                onClick={() => {
                   onSelectTab("lineage");
                   onClose();
                 }}

@@ -18,7 +18,8 @@ import {
   Layers,
   Database,
   CheckCircle2,
-  RotateCcw
+  RotateCcw,
+  Wand2
 } from "lucide-react";
 import { TimeMachineNumberExplanation } from "@/types/timeMachine";
 import { api } from "@/lib/api";
@@ -44,6 +45,7 @@ interface ExplainNumberModalProps {
   initialPeriod?: string;
   initialRegion?: string;
   initialValue?: string;
+  onSimulateChange?: (metricId: string, formula?: string) => void;
 }
 
 export const ExplainNumberModal: React.FC<ExplainNumberModalProps> = ({
@@ -52,7 +54,8 @@ export const ExplainNumberModal: React.FC<ExplainNumberModalProps> = ({
   metricId = "gross_margin",
   initialPeriod = "Q3 2026",
   initialRegion = "Europe",
-  initialValue = "27.2%"
+  initialValue = "27.2%",
+  onSimulateChange
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [activeTab, setActiveTab] = useState<
@@ -394,6 +397,22 @@ export const ExplainNumberModal: React.FC<ExplainNumberModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {onSimulateChange && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onSimulateChange(
+                    currentMetricId,
+                    explanation?.metric.formula || "((Revenue - Cost - Logistics Cost) / Revenue) * 100"
+                  );
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-bold transition-all shadow-sm shadow-purple-500/10"
+              >
+                <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+                <span>Simulate Definition Change</span>
+              </button>
+            )}
+
             <button
               onClick={() => {
                 navigator.clipboard.writeText(

@@ -418,8 +418,154 @@ export const api = {
     } catch (e) {}
     const { compareTwoMoments } = await import("./timeMachine");
     return compareTwoMoments(metricId, periodA, periodB);
+  },
+
+  // ==========================================================================
+  // METRIC IMPACT SIMULATOR (Section 25 & 26)
+  // ==========================================================================
+  async getImpactMetrics(): Promise<any> {
+    try {
+      const res = await fetch("/api/impact/metrics", { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { IMPACT_METRICS_CATALOG } = await import("./impactSimulator");
+    return {
+      status: "success",
+      count: Object.keys(IMPACT_METRICS_CATALOG).length,
+      metrics: Object.values(IMPACT_METRICS_CATALOG)
+    };
+  },
+
+  async getImpactDependencies(metricId: string = "gross_margin"): Promise<any> {
+    try {
+      const res = await fetch(`/api/impact/metric/${metricId}/dependencies`, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const {
+      IMPACT_METRICS_CATALOG,
+      GROSS_MARGIN_AFFECTED_ASSETS,
+      GROSS_MARGIN_DEPENDENT_METRICS,
+      evaluateImpactAssessment
+    } = await import("./impactSimulator");
+    const metric = IMPACT_METRICS_CATALOG[metricId] || IMPACT_METRICS_CATALOG.gross_margin;
+    const affectedAssets = metricId === "gross_margin" ? GROSS_MARGIN_AFFECTED_ASSETS : [];
+    const dependentMetrics = metricId === "gross_margin" ? GROSS_MARGIN_DEPENDENT_METRICS : [];
+    return {
+      status: "success",
+      metric_id: metric.id,
+      metric_name: metric.display_name,
+      current_version: metric.current_version,
+      impact_assessment: evaluateImpactAssessment(affectedAssets, dependentMetrics),
+      dependent_metrics: dependentMetrics,
+      affected_assets: affectedAssets
+    };
+  },
+
+  async simulateMetricImpact(payload: {
+    metric: string;
+    current_version?: string;
+    proposed_change?: { type: string; formula: string };
+    change_type?: string;
+    formula?: string;
+    scope?: { region: string; period: string };
+    user_name?: string;
+  }): Promise<any> {
+    try {
+      const res = await fetch("/api/impact/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(4000)
+      });
+      if (res.ok || res.status === 422) return await res.json();
+    } catch (e) {}
+    const { runMetricSimulation, validateProposedChange } = await import("./impactSimulator");
+    const metricId = payload.metric || "gross_margin";
+    const changeType = (payload.proposed_change?.type || payload.change_type || "formula_change") as any;
+    const formula =
+      payload.proposed_change?.formula ||
+      payload.formula ||
+      "((Revenue - Cost - Logistics Cost) / Revenue) * 100";
+    const validation = validateProposedChange(metricId, formula, changeType);
+    if (validation.blocked) {
+      return {
+        status: "blocked",
+        metric: metricId,
+        error: "SIMULATION_BLOCKED",
+        reason: validation.block_reason,
+        validation,
+        simulation_only: true
+      };
+    }
+    const simResult = runMetricSimulation(
+      metricId,
+      formula,
+      changeType,
+      payload.scope || { region: "Europe", period: "Q3 2026" },
+      payload.user_name || "Rajesh Kapoor"
+    );
+    return {
+      status: "success",
+      simulation_id: simResult.simulation_id,
+      metric: simResult.metric_id,
+      current_value: simResult.current_value,
+      simulated_value: simResult.simulated_value,
+      difference: simResult.difference,
+      difference_pp: simResult.difference_pp,
+      affected_assets: simResult.impact_assessment.total_affected_assets,
+      dependent_metrics: simResult.impact_assessment.dependent_metrics_count,
+      simulation_only: true,
+      simulation: simResult
+    };
+  },
+
+  async getImpactScenarios(metricId: string = "gross_margin", formula?: string): Promise<any> {
+    try {
+      const res = await fetch("/api/impact/scenarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ metric: metricId, formula }),
+        signal: AbortSignal.timeout(3000)
+      });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { generateWhatIfScenarios } = await import("./impactSimulator");
+    const scenarios = generateWhatIfScenarios(
+      metricId,
+      formula || "((Revenue - Cost - Logistics Cost) / Revenue) * 100"
+    );
+    return { status: "success", metric_id: metricId, scenarios };
+  },
+
+  async getImpactAssets(type?: string, search?: string): Promise<any> {
+    try {
+      const q = new URLSearchParams();
+      if (type) q.set("type", type);
+      if (search) q.set("search", search);
+      const res = await fetch(`/api/impact/assets?${q.toString()}`, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) return await res.json();
+    } catch (e) {}
+    const { GROSS_MARGIN_AFFECTED_ASSETS } = await import("./impactSimulator");
+    let assets = GROSS_MARGIN_AFFECTED_ASSETS;
+    if (type && type !== "all") assets = assets.filter((a) => a.type === type);
+    if (search) {
+      const s = search.toLowerCase();
+      assets = assets.filter((a) => a.name.toLowerCase().includes(s) || a.impact_reason.toLowerCase().includes(s));
+    }
+    return { status: "success", count: assets.length, assets };
+  },
+
+  async getSimulationAuditTrail(): Promise<any> {
+    const { getAuditTrail } = await import("./impactSimulator");
+    return getAuditTrail();
+  },
+
+  async updateSimulationStatus(simId: string, status: "Simulation Only" | "Under Review" | "Approved"): Promise<void> {
+    const { updateAuditStatus } = await import("./impactSimulator");
+    updateAuditStatus(simId, status);
   }
 };
+
 
 /**
  * Intelligent Local Semantic AI Engine Fallback.

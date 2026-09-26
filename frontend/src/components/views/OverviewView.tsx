@@ -10,7 +10,8 @@ import {
   Building2,
   Package,
   Layers,
-  Activity
+  Activity,
+  Wand2
 } from "lucide-react";
 import { KPICardData, ExecutiveOverviewData } from "@/types";
 import { Sparkline } from "@/components/charts/Sparkline";
@@ -51,13 +52,21 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => onNavigateTab("metric-impact")}
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-bold transition-all shadow-lg shrink-0 group"
+            >
+              <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+              <span>Impact Simulator</span>
+            </button>
+
             <button
               onClick={() => onExplainNumber?.("gross_margin", data.period, data.region, "27.2%")}
               className="flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-2xl bg-slate-900/90 hover:bg-slate-800 text-sky-300 border border-sky-500/30 text-xs font-bold transition-all shadow-lg shrink-0 group"
             >
               <Sparkles className="w-3.5 h-3.5 text-sky-400" />
-              <span>Time Machine: Margin 27.2%</span>
+              <span>Time Machine: 27.2%</span>
             </button>
 
             <button
@@ -65,7 +74,7 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
               className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-xl shadow-sky-500/25 shrink-0 group"
             >
               <Sparkles className="w-4 h-4" />
-              <span>Ask &quot;Why did European margins drop?&quot;</span>
+              <span>Ask Agent</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>

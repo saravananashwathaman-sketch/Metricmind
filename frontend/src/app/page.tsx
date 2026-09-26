@@ -20,6 +20,7 @@ import { TrustCenterView } from "@/components/views/TrustCenterView";
 import { ApiCheckView } from "@/components/views/ApiCheckView";
 import { ProfileView } from "@/components/views/ProfileView";
 import { TimeMachineView } from "@/components/views/TimeMachineView";
+import { MetricImpactView } from "@/components/views/MetricImpactView";
 import { ExplainNumberModal } from "@/components/time-machine/ExplainNumberModal";
 import { Role, ExecutiveOverviewData, MetricMindChatResponse, UserProfile } from "@/types";
 import { DEFAULT_OVERVIEW_DATA, DEFAULT_USER_PROFILE } from "@/lib/mockData";
@@ -41,6 +42,11 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
   const [savedInsightIds, setSavedInsightIds] = useState<string[]>(["INS_EUR_001", "INS_REV_002"]);
   const [overviewData, setOverviewData] = useState<ExecutiveOverviewData>(DEFAULT_OVERVIEW_DATA);
 
+  // Metric Impact Simulator Cross-Navigation State
+  const [impactMetricId, setImpactMetricId] = useState<string>("gross_margin");
+  const [impactFormula, setImpactFormula] = useState<string | undefined>(undefined);
+  const [isHistoricalImpact, setIsHistoricalImpact] = useState<boolean>(false);
+
   // Time Machine ("Explain This Number") Modal State
   const [isExplainModalOpen, setIsExplainModalOpen] = useState(false);
   const [explainMetricId, setExplainMetricId] = useState("gross_margin");
@@ -61,15 +67,32 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
     setIsExplainModalOpen(true);
   };
 
+  const handleNavigateToSimulator = (
+    metricId: string = "gross_margin",
+    formula?: string,
+    isHistorical: boolean = false
+  ) => {
+    setImpactMetricId(metricId);
+    setImpactFormula(formula);
+    setIsHistoricalImpact(isHistorical);
+    setActiveTab("metric-impact");
+    if (typeof window !== "undefined") window.history.pushState({}, "", "/metric-impact");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   useEffect(() => {
     // Check initial URL path or popstate
     if (typeof window !== "undefined") {
       if (window.location.pathname === "/profile") {
         setActiveTab("profile");
+      } else if (window.location.pathname === "/metric-impact") {
+        setActiveTab("metric-impact");
       }
       const handlePopState = () => {
         if (window.location.pathname === "/profile") {
           setActiveTab("profile");
+        } else if (window.location.pathname === "/metric-impact") {
+          setActiveTab("metric-impact");
         } else if (window.location.pathname === "/" || window.location.pathname === "") {
           setActiveTab("overview");
         }
@@ -143,8 +166,10 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
           setActiveTab(tab);
           if (tab === "profile") {
             if (typeof window !== "undefined") window.history.pushState({}, "", "/profile");
+          } else if (tab === "metric-impact") {
+            if (typeof window !== "undefined") window.history.pushState({}, "", "/metric-impact");
           } else {
-            if (typeof window !== "undefined" && window.location.pathname === "/profile") {
+            if (typeof window !== "undefined" && (window.location.pathname === "/profile" || window.location.pathname === "/metric-impact")) {
               window.history.pushState({}, "", "/");
             }
           }
@@ -188,6 +213,16 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
               onAskQuestion={handleAskQuestion}
               onNavigateTab={(tab) => setActiveTab(tab as NavTab)}
               onExplainNumber={handleExplainNumber}
+            />
+          )}
+
+          {activeTab === "metric-impact" && (
+            <MetricImpactView
+              initialMetricId={impactMetricId}
+              initialFormula={impactFormula}
+              isHistoricalMode={isHistoricalImpact}
+              userRole={userRole}
+              onNavigateTab={(tab) => setActiveTab(tab as NavTab)}
             />
           )}
 
@@ -238,6 +273,7 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
             <SemanticCatalogView
               onAskQuestion={handleAskQuestion}
               onViewLineage={handleViewLineage}
+              onSimulateChange={handleNavigateToSimulator}
             />
           )}
 
@@ -303,7 +339,12 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
         initialPeriod={explainPeriod}
         initialRegion={explainRegion}
         initialValue={explainValue}
+        onSimulateChange={(mId, formula) => {
+          setIsExplainModalOpen(false);
+          handleNavigateToSimulator(mId, formula, true);
+        }}
       />
+
 
       {/* Command Palette Modal (⌘K) */}
       <CommandPalette

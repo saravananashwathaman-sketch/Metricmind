@@ -15,7 +15,8 @@ import {
   Copy,
   ExternalLink,
   ShieldCheck,
-  Filter
+  Filter,
+  Wand2
 } from "lucide-react";
 import { MetricDefinition } from "@/types";
 import { api } from "@/lib/api";
@@ -24,11 +25,13 @@ import { GOVERNED_METRIC_CATALOG } from "@/lib/mockData";
 interface SemanticCatalogViewProps {
   onAskQuestion: (q: string) => void;
   onViewLineage: (metricId: string) => void;
+  onSimulateChange?: (metricId: string, formula?: string) => void;
 }
 
 export const SemanticCatalogView: React.FC<SemanticCatalogViewProps> = ({
   onAskQuestion,
-  onViewLineage
+  onViewLineage,
+  onSimulateChange
 }) => {
   const [metrics, setMetrics] = useState<MetricDefinition[]>(GOVERNED_METRIC_CATALOG);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
@@ -278,7 +281,17 @@ export const SemanticCatalogView: React.FC<SemanticCatalogViewProps> = ({
               </div>
 
               {/* Actions */}
-              <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-3">
+              <div className="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
+                {onSimulateChange && (
+                  <button
+                    onClick={() => onSimulateChange(selectedMetric.id, selectedMetric.formula)}
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm shadow-purple-500/10"
+                  >
+                    <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+                    <span>Simulate Change</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => onAskQuestion(`Why did our ${selectedMetric.display_name} change last quarter?`)}
                   className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-lg shadow-sky-500/20 text-center"

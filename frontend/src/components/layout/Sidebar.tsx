@@ -21,13 +21,15 @@ import {
   Award,
   Terminal,
   Check,
-  Clock
+  Clock,
+  Wand2
 } from "lucide-react";
 import { Role, UserProfile } from "@/types";
 
 export type NavTab =
   | "overview"
   | "time-machine"
+  | "metric-impact"
   | "ask"
   | "api-check"
   | "trust-center"
@@ -66,6 +68,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: "overview", label: "Executive Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
+    {
+      id: "metric-impact",
+      label: "Impact Simulator",
+      icon: <Wand2 className="w-4 h-4 text-purple-400" />,
+      badge: "Predictive"
+    },
     {
       id: "time-machine",
       label: "Time Machine",
