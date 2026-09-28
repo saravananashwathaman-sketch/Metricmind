@@ -7,6 +7,7 @@ from app.semantic_layer.catalog import get_metric, GOVERNED_METRICS, GOVERNED_DI
 from app.semantic_layer.query_engine import semantic_engine, SemanticQuery, SemanticFilter
 from app.agent.reasoning_engine import reasoning_engine
 from app.data.database import db
+from app.api.firewall import run_firewall_validation
 
 class AgentStep(BaseModel):
     step_number: int
@@ -80,6 +81,33 @@ class AgenticOrchestrator:
             ))
 
         q_lower = req.question.lower()
+
+        # MANDATORY GATEWAY: AI HALLUCINATION FIREWALL
+        firewall_res = run_firewall_validation(req.question, req.user_role)
+        if firewall_res["status"] == "BLOCKED":
+            blocked_card = firewall_res.get("blocked_card", {})
+            elapsed = round((time.time() - start_time) * 1000, 1)
+            return MetricMindChatResponse(
+                conversation_id=conv_id,
+                question=req.question,
+                status="blocked",
+                processing_time_ms=elapsed,
+                reasoning_steps=[
+                    AgentStep(step_number=1, title="Understand User Intent", status="completed", detail=f"Input intent: '{req.question[:50]}'", timestamp_ms=5.0),
+                    AgentStep(step_number=2, title="AI Hallucination Firewall Validation", status="failed", detail=f"BLOCKED: {firewall_res['reason']}", timestamp_ms=elapsed),
+                    AgentStep(step_number=3, title="Semantic Query Execution", status="pending", detail="Canceled: Cube REST API invocation blocked by AI Hallucination Firewall.", timestamp_ms=elapsed)
+                ],
+                executive_summary=blocked_card.get("explanation", firewall_res.get("reason", "Query blocked by AI Hallucination Firewall.")),
+                kpi_comparison={"metric_id": "blocked", "metric_name": "Access Intercepted", "current_period": "N/A", "baseline_period": "N/A", "current_value": "BLOCKED", "baseline_value": "0", "difference": 0, "percentage_change": "0%", "unit": "count", "is_positive": False},
+                governed_metric=GovernedMetricInfo(id="blocked", name=blocked_card.get("target", "Blocked Entity"), formula="PROHIBITED_OR_UNAVAILABLE", data_source="Cube Semantic Layer (Blocked)", dbt_model="marts.governance.firewall_intercept", owner="AI Hallucination Firewall", version="1.0.0", status="Draft"),
+                drivers=[],
+                regional_breakdown=[],
+                primary_chart_type="bar",
+                primary_chart_data=[],
+                evidence=AnalyticalEvidence(headers=["Firewall Stage", "Status", "Target", "Policy", "Cube API Status"], rows=[[firewall_res.get("failed_stage", "VALIDATION"), "BLOCKED", blocked_card.get("target", "Offending Entity"), "Mandatory Semantic Allowlist", "NOT CALLED"]], total_records=1, governed_signature="FIREWALL-BLOCKED-GATEWAY"),
+                calculation_details={"metric_name": blocked_card.get("target", "Blocked Entity"), "governed_formula": "BLOCKED", "sql_equivalent": "NONE (Blocked by AI Hallucination Firewall)", "source_model": "Cube Semantic Layer", "fact_table": "Zero SQL Gateway", "dimensions_evaluated": [], "applied_filters": {}, "reporting_period": "N/A", "verified_by": "AI Hallucination Firewall", "version": "Active", "governance_status": "BLOCKED"},
+                suggested_followups=["Show me European sales", "Show me Q3 Revenue", "Show gross margin by country", "What metrics are approved in the Semantic Catalog?"]
+            )
 
         # STEP 1: Understand user intent
         analysis_type = "variance_driver_analysis"

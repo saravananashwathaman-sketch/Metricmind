@@ -22,7 +22,8 @@ import {
   Terminal,
   Check,
   Clock,
-  Wand2
+  Wand2,
+  ShieldAlert
 } from "lucide-react";
 import { Role, UserProfile } from "@/types";
 
@@ -31,6 +32,7 @@ export type NavTab =
   | "time-machine"
   | "metric-impact"
   | "ask"
+  | "firewall"
   | "api-check"
   | "trust-center"
   | "query-explorer"
@@ -85,6 +87,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: "Ask MetricMind",
       icon: <Sparkles className="w-4 h-4 text-sky-400" />,
       badge: "AI Agent"
+    },
+    {
+      id: "firewall",
+      label: "AI Firewall",
+      icon: <ShieldAlert className="w-4 h-4 text-rose-400" />,
+      badge: "Zero-Trust"
     },
     {
       id: "trust-center",

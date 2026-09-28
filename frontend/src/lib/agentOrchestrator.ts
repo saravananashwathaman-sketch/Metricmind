@@ -288,6 +288,9 @@ export function toolGenerateVisualizationConfig(metric: string, question: string
  * MASTER ORCHESTRATION PIPELINE
  * Translates Natural Language -> LangChain-style Governed Agent -> Strict JSON -> Cube REST API -> Response
  */
+import { validateThroughFirewall } from "./firewallEngine";
+import { FirewallDecision } from "@/types/firewall";
+
 export async function runMetricMindAgent(
   question: string,
   userRole: string = "Executive"
@@ -298,13 +301,174 @@ export async function runMetricMindAgent(
   const startTime = performance.now();
   const traceSteps: any[] = [];
 
-  // Step 1: Detect SQL injection or raw SQL attempts
-  const sqlCheck = detectSqlHallucination(question);
-  if (sqlCheck.isHallucinatingSql) {
-    throw new Error(
-      "SQL HALLUCINATION BLOCKED: Direct SQL queries are strictly prohibited. MetricMind only accepts governed business questions."
-    );
+  // ==============================================================
+  // MANDATORY GATEWAY: AI HALLUCINATION FIREWALL
+  // Validate request BEFORE it touches Cube.dev or any data source
+  // ==============================================================
+  const firewallDecision: FirewallDecision = validateThroughFirewall(question, { userRole });
+
+  if (firewallDecision.status === "BLOCKED") {
+    const elapsed = Math.round(performance.now() - startTime);
+    const blockedCard = firewallDecision.blocked_card!;
+
+    traceSteps.push({
+      tool: "ai_hallucination_firewall()",
+      description: `Firewall Intercept [${firewallDecision.failed_stage}]: ${firewallDecision.reason}`,
+      output: {
+        status: "BLOCKED",
+        failed_stage: firewallDecision.failed_stage,
+        cube_request_sent: false,
+        sql_detected: firewallDecision.sql_detected,
+        stages_evaluated: firewallDecision.stages.length
+      },
+      duration_ms: elapsed
+    });
+
+    const blockedChatResponse: MetricMindChatResponse = {
+      conversation_id: `CONV_BLOCKED_${Date.now()}`,
+      question,
+      status: "blocked",
+      processing_time_ms: elapsed,
+      firewall_decision: firewallDecision,
+      blocked_card: blockedCard,
+      reasoning_steps: [
+        {
+          step_number: 1,
+          title: "Understand User Intent",
+          status: "completed",
+          detail: `Parsed input intent: "${question.slice(0, 60)}"`,
+          timestamp_ms: 10
+        },
+        {
+          step_number: 2,
+          title: "AI Hallucination Firewall Validation",
+          status: "failed",
+          detail: `BLOCKED at stage [${firewallDecision.failed_stage}]: ${firewallDecision.reason}`,
+          timestamp_ms: elapsed
+        },
+        {
+          step_number: 3,
+          title: "Cube API Query Execution",
+          status: "pending",
+          detail: "Canceled: Cube REST API invocation blocked by AI Hallucination Firewall.",
+          timestamp_ms: elapsed
+        }
+      ],
+      executive_summary: blockedCard.explanation,
+      kpi_comparison: {
+        metric_id: "blocked",
+        metric_name: "Access Intercepted",
+        current_period: "N/A",
+        baseline_period: "N/A",
+        current_value: "BLOCKED",
+        baseline_value: "0",
+        difference: 0,
+        percentage_change: "0%",
+        unit: "count",
+        is_positive: false
+      },
+      governed_metric: {
+        id: "blocked",
+        name: blockedCard.target,
+        formula: "PROHIBITED_OR_UNAVAILABLE",
+        data_source: "Cube Semantic Layer (Blocked)",
+        dbt_model: "marts.governance.firewall_intercept",
+        owner: "AI Hallucination Firewall",
+        version: "1.0.0",
+        status: "Draft"
+      },
+      drivers: [],
+      regional_breakdown: [],
+      primary_chart_type: "bar",
+      primary_chart_data: [],
+      evidence: {
+        headers: ["Firewall Stage", "Status", "Target", "Enforcement Policy", "Cube API Status"],
+        rows: [
+          [
+            firewallDecision.failed_stage || "VALIDATION",
+            "BLOCKED",
+            blockedCard.target,
+            "Mandatory Semantic Allowlist",
+            "NOT CALLED"
+          ]
+        ],
+        total_records: 1,
+        governed_signature: "FIREWALL-BLOCKED-GATEWAY"
+      },
+      calculation_details: {
+        metric_name: blockedCard.target,
+        governed_formula: "BLOCKED",
+        sql_equivalent: "NONE (Blocked by AI Hallucination Firewall)",
+        source_model: "Cube Semantic Layer",
+        fact_table: "Zero SQL Query Gateway",
+        dimensions_evaluated: [],
+        applied_filters: {},
+        reporting_period: "N/A",
+        verified_by: "AI Hallucination Firewall",
+        version: "Active",
+        governance_status: "BLOCKED"
+      },
+      suggested_followups: [
+        "Show me European sales",
+        "Show me Q3 Revenue",
+        "Show gross margin by country",
+        "What metrics are approved in the Semantic Catalog?"
+      ]
+    };
+
+    const blockedTrace: AgentExecutionTrace = {
+      user_question: question,
+      intent: `Blocked request: ${question.slice(0, 50)}`,
+      resolved_metric: firewallDecision.resolved_metric || "NONE",
+      resolved_dimensions: firewallDecision.resolved_dimensions || [],
+      resolved_filters: {},
+      resolved_time_range: "N/A",
+      semantic_json: {
+        measures: [],
+        dimensions: [],
+        filters: [],
+        order: [],
+        limit: 0
+      } as any,
+      cube_payload: null,
+      validation_status: "FAILED",
+      cube_response: {
+        success: false,
+        metric: "blocked",
+        filters: {},
+        data: [],
+        metadata: {
+          source: "Cube.dev Semantic Layer",
+          definition_version: "N/A",
+          governed_formula: "BLOCKED",
+          cube_model: "N/A",
+          sql_generated_by_llm: "NONE",
+          validation_status: "FAILED",
+          execution_time_ms: elapsed,
+          result_hash: "FIREWALL-BLOCKED",
+          timestamp: new Date().toISOString(),
+          cube_payload: null
+        }
+      },
+      sql_generated_by_llm: "NONE",
+      execution_steps: traceSteps
+    };
+
+    return { chatResponse: blockedChatResponse, trace: blockedTrace };
   }
+
+  // Record passed firewall stage in trace
+  traceSteps.push({
+    tool: "ai_hallucination_firewall()",
+    description: "Passed all 16 AI Hallucination Firewall checks. Authorized for Cube Semantic Layer retrieval.",
+    output: {
+      status: "APPROVED",
+      stages_passed: firewallDecision.stages.length,
+      cube_request_sent: true,
+      sql_detected: false
+    },
+    duration_ms: 12
+  });
 
   // Step 2: Retrieve Schema
   const schema = toolGetSemanticSchema();
@@ -317,13 +481,6 @@ export async function runMetricMindAgent(
 
   // Step 3: Metric Resolution
   const metricRes = toolResolveMetric(question);
-  if (!metricRes.matched) {
-    throw new Error(
-      `I couldn't map '${question}' to a governed metric. No approved metric with that definition exists in MetricMind. Available metrics: ${schema.measures
-        .map((m) => m.name)
-        .join(", ")}.`
-    );
-  }
   traceSteps.push({
     tool: "resolve_metric()",
     description: `Resolved to governed measure '${metricRes.name}' (${metricRes.metric})`,

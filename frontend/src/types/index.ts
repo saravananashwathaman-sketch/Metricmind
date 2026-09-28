@@ -144,10 +144,13 @@ export interface KPIComparison {
   is_positive: boolean;
 }
 
+export * from "./firewall";
+import { FirewallDecision, FirewallBlockedCard } from "./firewall";
+
 export interface MetricMindChatResponse {
   conversation_id: string;
   question: string;
-  status: "success" | "error";
+  status: "success" | "error" | "blocked";
   processing_time_ms: number;
   reasoning_steps: AgentStep[];
   executive_summary: string;
@@ -163,6 +166,8 @@ export interface MetricMindChatResponse {
   calculation_details: CalculationDetails;
   suggested_followups: string[];
   _trace?: any;
+  firewall_decision?: FirewallDecision;
+  blocked_card?: FirewallBlockedCard;
 }
 
 export interface MetricDefinition {

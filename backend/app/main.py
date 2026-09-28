@@ -10,6 +10,7 @@ from app.api.history import router as history_router
 from app.api.insights import router as insights_router
 from app.api.time_machine import router as time_machine_router
 from app.api.impact import router as impact_router
+from app.api.firewall import router as firewall_router
 
 app = FastAPI(
     title="MetricMind — Agentic Semantic BI Engine",
@@ -36,6 +37,7 @@ app.include_router(history_router)
 app.include_router(insights_router)
 app.include_router(time_machine_router)
 app.include_router(impact_router)
+app.include_router(firewall_router)
 
 
 @app.get("/")

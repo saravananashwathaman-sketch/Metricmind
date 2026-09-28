@@ -18,6 +18,7 @@ import { DatabaseAdminView } from "@/components/views/DatabaseAdminView";
 import { SemanticAdminView } from "@/components/views/SemanticAdminView";
 import { TrustCenterView } from "@/components/views/TrustCenterView";
 import { ApiCheckView } from "@/components/views/ApiCheckView";
+import { FirewallDashboardView } from "@/components/views/FirewallDashboardView";
 import { ProfileView } from "@/components/views/ProfileView";
 import { TimeMachineView } from "@/components/views/TimeMachineView";
 import { MetricImpactView } from "@/components/views/MetricImpactView";
@@ -248,6 +249,10 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
             />
           )}
 
+
+          {activeTab === "firewall" && (
+            <FirewallDashboardView />
+          )}
 
           {activeTab === "trust-center" && (
             <TrustCenterView />

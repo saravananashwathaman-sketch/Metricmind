@@ -131,19 +131,17 @@ export const ApiCheckView: React.FC = () => {
         signal: AbortSignal.timeout(8000)
       });
 
-      if (resp.ok) {
-        const data = await resp.json();
-        if (data._trace) {
-          setTraceData(data._trace);
-          setIsRunning(false);
-          return;
-        }
+      const data = await resp.json().catch(() => null);
+
+      if (resp.ok && data?._trace) {
+        setTraceData(data._trace);
+        setIsRunning(false);
+        return;
       }
 
       // Check if server returned a controlled business error
-      const errJson = await resp.json().catch(() => ({}));
-      if (errJson.error) {
-        setErrorMessage(errJson.error);
+      if (data?.error) {
+        setErrorMessage(data.error);
         setIsRunning(false);
         return;
       }
@@ -164,7 +162,9 @@ export const ApiCheckView: React.FC = () => {
   };
 
   const handleCopy = (text: string, section: string) => {
-    navigator.clipboard.writeText(text);
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
     setCopiedSection(section);
     setTimeout(() => setCopiedSection(null), 2000);
   };

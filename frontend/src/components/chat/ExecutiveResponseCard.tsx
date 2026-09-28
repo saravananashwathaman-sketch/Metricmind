@@ -26,6 +26,8 @@ import { WaterfallChart } from "@/components/charts/WaterfallChart";
 import { ComparisonBarChart } from "@/components/charts/ComparisonBarChart";
 import { TrendLineChart } from "@/components/charts/TrendLineChart";
 
+import { FirewallBlockedCardView } from "@/components/firewall/FirewallBlockedCardView";
+
 interface ExecutiveResponseCardProps {
   response: MetricMindChatResponse;
   onSaveInsight: (response: MetricMindChatResponse) => void;
@@ -53,6 +55,17 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
     "none" | "query" | "definition" | "lineage" | "api" | "audit"
   >("none");
   const [showDebugPanel, setShowDebugPanel] = useState(false);
+
+  // If request was blocked by the AI Hallucination Firewall
+  if (response.status === "blocked" && response.blocked_card) {
+    return (
+      <FirewallBlockedCardView
+        blockedCard={response.blocked_card}
+        decision={response.firewall_decision}
+        onAskAlternative={(alt) => onAskFollowup(alt)}
+      />
+    );
+  }
 
   const {
     question,
