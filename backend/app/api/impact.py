@@ -30,7 +30,7 @@ class SimulationRequest(BaseModel):
     proposed_definition: Optional[DefinitionPayload] = None
     scope: Optional[SimulationScopePayload] = None
     simulation_scope: Optional[SimulationScopePayload] = None
-    user_name: Optional[str] = "Rajesh Kapoor"
+    user_name: Optional[str] = "Ashwathaman"
 
 class ScenarioRequest(BaseModel):
     metric: Optional[str] = "gross_margin"
@@ -109,7 +109,7 @@ IN_MEMORY_SIMULATIONS = {
         "metric": "gross_margin",
         "current_version": "v2.1",
         "proposed_version": "Draft",
-        "user": "Rajesh Kapoor",
+        "user": "Ashwathaman",
         "current_formula": "((Revenue - Cost) / Revenue) * 100",
         "proposed_formula": "((Revenue - Cost - Logistics Cost) / Revenue) * 100",
         "current_value": 27.20,

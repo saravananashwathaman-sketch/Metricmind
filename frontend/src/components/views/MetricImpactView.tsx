@@ -100,7 +100,7 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
         metric: selectedMetricId,
         change_type: changeType,
         formula: proposedFormula,
-        user_name: userRole === "Admin" ? "Priya Sharma" : "Rajesh Kapoor"
+        user_name: userRole === "Admin" ? "Priya Sharma" : "Ashwathaman"
       });
 
       if (res.simulation) {
@@ -112,7 +112,7 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
           proposedFormula,
           changeType,
           { region: "Europe", period: "Q3 2026" },
-          userRole === "Admin" ? "Priya Sharma" : "Rajesh Kapoor"
+          userRole === "Admin" ? "Priya Sharma" : "Ashwathaman"
         );
         setSimulation(localSim);
       }

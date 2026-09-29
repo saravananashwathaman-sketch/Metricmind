@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { Zap } from "lucide-react";
 import { Sidebar, NavTab } from "@/components/layout/Sidebar";
 import { TopNav } from "@/components/layout/TopNav";
 import { CommandPalette } from "@/components/layout/CommandPalette";
@@ -26,8 +28,12 @@ import { ExplainNumberModal } from "@/components/time-machine/ExplainNumberModal
 import { Role, ExecutiveOverviewData, MetricMindChatResponse, UserProfile } from "@/types";
 import { DEFAULT_OVERVIEW_DATA, DEFAULT_USER_PROFILE } from "@/lib/mockData";
 import { api } from "@/lib/api";
+import { useAuth } from "@/lib/authContext";
 
 export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab }) {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading: authLoading, isDemo, logout } = useAuth();
+
   const [activeTab, setActiveTab] = useState<NavTab>(initialTab);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -36,6 +42,32 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
   const [region, setRegion] = useState("Global");
   const [isDemoMode, setIsDemoMode] = useState(true);
   const [userProfile, setUserProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
+
+  // Protected route check: unauthenticated users redirect to /login
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      const currentPath = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+      router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+    }
+  }, [authLoading, isAuthenticated, router]);
+
+  // Synchronize authenticated user profile and role
+  useEffect(() => {
+    if (user) {
+      if (user.role) setUserRole(user.role as Role);
+      setIsDemoMode(isDemo);
+      setUserProfile((prev) => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        role: (user.role as Role) || prev.role,
+        initials: user.initials || prev.initials,
+        title: user.title || prev.title,
+        department: user.department || prev.department,
+        organization: user.organization || prev.organization
+      }));
+    }
+  }, [user, isDemo]);
 
   // Cross-view state transfer (e.g. asking a question from Overview jumps to Ask page)
   const [pendingQuestion, setPendingQuestion] = useState<string | undefined>(undefined);
@@ -150,13 +182,30 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
         drivers: res.drivers,
         filters: res.calculation_details.applied_filters,
         semantic_definition: res.governed_metric.formula,
-        created_by: "Rajesh Kapoor"
+        created_by: userProfile?.name || "Ashwathaman"
       });
       setSavedInsightIds((prev) => [...prev, res.conversation_id]);
     } catch (e) {
       console.error("Failed to save insight", e);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-slate-950 text-slate-300">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-xl animate-pulse">
+            <Zap className="w-6 h-6 fill-white/20" />
+          </div>
+          <div className="text-xs font-mono text-slate-400">Authenticating governed session...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans antialiased selection:bg-sky-500/30 selection:text-sky-200">
@@ -185,6 +234,7 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
         }}
         isDemoMode={isDemoMode}
         userProfile={userProfile}
+        onLogout={logout}
       />
 
       {/* Main Workspace Frame */}
@@ -331,6 +381,7 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
                   setUserRole(updated.role as Role);
                 }
               }}
+              onLogout={logout}
             />
           )}
         </main>

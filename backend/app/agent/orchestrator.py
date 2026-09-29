@@ -19,7 +19,7 @@ class AgentStep(BaseModel):
 class MetricMindChatRequest(BaseModel):
     question: str
     user_role: str = "Executive"
-    user_name: str = "Rajesh Kapoor"
+    user_name: str = "Ashwathaman"
     conversation_id: Optional[str] = None
     override_period: Optional[str] = None
     override_region: Optional[str] = None

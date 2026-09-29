@@ -7,7 +7,8 @@ import {
   SavedInsight,
   QueryHistoryItem,
   RogueSimulationResult,
-  UserProfile
+  UserProfile,
+  AuthSession
 } from "@/types";
 import {
   GOVERNED_METRIC_CATALOG,
@@ -30,7 +31,7 @@ export const api = {
   async askQuestion(
     question: string,
     role: string = "Executive",
-    userName: string = "Rajesh Kapoor",
+    userName: string = "Ashwathaman",
     region?: string,
     period?: string
   ): Promise<MetricMindChatResponse> {
@@ -264,6 +265,66 @@ export const api = {
       if (res.ok) return await res.json();
     } catch (e) {}
     return null;
+  },
+
+  async login(email: string, password: string, rememberMe: boolean = false): Promise<AuthSession> {
+    // Try Next.js internal auth API endpoint
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, remember_me: rememberMe })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Unable to sign in. Please check your credentials and try again.");
+      }
+      return data;
+    } catch (e: any) {
+      // If network fails or external API is used, try API_BASE fallback
+      if (e.message && !e.message.includes("Unable to sign in")) {
+        try {
+          const res = await fetch(`${API_BASE}/api/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, remember_me: rememberMe })
+          });
+          const data = await res.json();
+          if (res.ok) return data;
+          throw new Error(data.detail || data.error || "Unable to sign in. Please check your credentials and try again.");
+        } catch (apiErr: any) {
+          throw new Error(apiErr.message || "Unable to connect to the authentication service. Please try again.");
+        }
+      }
+      throw e;
+    }
+  },
+
+  async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Unable to process password reset request.");
+      }
+      return data;
+    } catch (e: any) {
+      // Security standard: Always return success message
+      return {
+        success: true,
+        message: "If the account exists, recovery instructions have been sent."
+      };
+    }
+  },
+
+  async logout(): Promise<void> {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {}
   },
 
   async getProfile(): Promise<UserProfile> {
@@ -502,7 +563,7 @@ export const api = {
       formula,
       changeType,
       payload.scope || { region: "Europe", period: "Q3 2026" },
-      payload.user_name || "Rajesh Kapoor"
+      payload.user_name || "Ashwathaman"
     );
     return {
       status: "success",

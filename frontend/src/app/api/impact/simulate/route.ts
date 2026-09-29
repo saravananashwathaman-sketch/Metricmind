@@ -14,7 +14,7 @@ export async function POST(request: Request) {
       "((Revenue - Cost - Logistics Cost) / Revenue) * 100";
 
     const scope = body.scope || body.simulation_scope || { region: "Europe", period: "Q3 2026" };
-    const userName = body.user_name || "Rajesh Kapoor";
+    const userName = body.user_name || "Ashwathaman";
 
     // Run semantic governance validation
     const validation = validateProposedChange(metricId, proposedFormula, changeType);

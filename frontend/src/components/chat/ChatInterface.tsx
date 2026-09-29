@@ -103,7 +103,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }, 180);
 
     try {
-      const resp = await api.askQuestion(q, userRole, "Rajesh Kapoor", region, quarter);
+      const resp = await api.askQuestion(q, userRole, "Ashwathaman", region, quarter);
       clearInterval(stepInterval);
       setReasoningSteps(resp.reasoning_steps);
       setActiveStepIndex(12);

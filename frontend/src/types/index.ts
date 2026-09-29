@@ -5,6 +5,25 @@ export interface UserProfileRoleAccess {
   restricted: string[];
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: Role | string;
+  initials: string;
+  title?: string;
+  department?: string;
+  organization?: string;
+  avatar_url?: string | null;
+}
+
+export interface AuthSession {
+  user: AuthUser;
+  token: string;
+  expires_at: number;
+  is_demo: boolean;
+}
+
 export interface UserPreferences {
   theme: "dark" | "light" | "system" | string;
   language: string;

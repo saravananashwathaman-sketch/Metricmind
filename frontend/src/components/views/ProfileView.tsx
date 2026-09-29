@@ -35,7 +35,8 @@ import {
   Lock,
   RefreshCw,
   X,
-  FileText
+  FileText,
+  LogOut
 } from "lucide-react";
 import { UserProfile, Role } from "@/types";
 import { DEFAULT_USER_PROFILE } from "@/lib/mockData";
@@ -48,6 +49,7 @@ interface ProfileViewProps {
   onAskQuestion?: (q: string) => void;
   onNavigateTab?: (tab: NavTab) => void;
   onProfileUpdated?: (updated: UserProfile) => void;
+  onLogout?: () => void;
 }
 
 interface ToastInfo {
@@ -61,7 +63,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   isDemoMode = true,
   onAskQuestion,
   onNavigateTab,
-  onProfileUpdated
+  onProfileUpdated,
+  onLogout
 }) => {
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
   const [loading, setLoading] = useState(true);
@@ -166,7 +169,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         .map((p) => p[0])
         .slice(0, 2)
         .join("")
-        .toUpperCase() || "RK";
+        .toUpperCase() || "A";
 
       const updated = await api.updateProfile({
         name: editForm.name.trim(),
@@ -411,7 +414,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   />
                 ) : (
                   <div className="w-full h-full rounded-[14px] bg-slate-950 flex items-center justify-center text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-200">
-                    {profile.initials || "RK"}
+                    {profile.initials || "A"}
                   </div>
                 )}
               </div>
@@ -502,6 +505,16 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
               <Laptop className="w-4 h-4 text-slate-400" />
               Sessions (2)
             </button>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-medium transition-all"
+                title="Sign out of MetricMind"
+              >
+                <LogOut className="w-4 h-4 text-rose-400" />
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -1081,7 +1094,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   type="text"
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                  placeholder="e.g. Rajesh Kapoor"
+                  placeholder="e.g. Ashwathaman"
                   className={`w-full px-3 py-2 rounded-xl bg-slate-950 border ${
                     formErrors.name ? "border-rose-500" : "border-slate-800"
                   } text-slate-100 text-xs focus:outline-none focus:border-sky-500`}
@@ -1098,7 +1111,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                   type="email"
                   value={editForm.email}
                   onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                  placeholder="e.g. rajesh.kapoor@metricmind.com"
+                  placeholder="e.g. ashwathaman@metricmind.com"
                   className={`w-full px-3 py-2 rounded-xl bg-slate-950 border ${
                     formErrors.email ? "border-rose-500" : "border-slate-800"
                   } text-slate-100 text-xs focus:outline-none focus:border-sky-500`}

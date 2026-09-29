@@ -40,7 +40,7 @@ export async function PUT(request: Request) {
         .map((part: string) => part[0])
         .join("")
         .toUpperCase()
-        .slice(0, 2) || "RK";
+        .slice(0, 2) || "A";
     }
 
     currentProfile = {

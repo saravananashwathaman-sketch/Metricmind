@@ -332,7 +332,7 @@ export const GROSS_MARGIN_AFFECTED_ASSETS: AffectedAssetItem[] = [
     id: "dash_01",
     name: "Executive Overview",
     type: "dashboard",
-    owner: "Rajesh Kapoor",
+    owner: "Ashwathaman",
     owner_role: "Chief Executive Officer",
     impact_reason: "Primary top-line KPI tile, regional margin bar chart, and waterfall driver breakdown",
     widgets_count: 4,
@@ -404,7 +404,7 @@ export const GROSS_MARGIN_AFFECTED_ASSETS: AffectedAssetItem[] = [
     id: "rep_02",
     name: "Board Commercial Pack",
     type: "report",
-    owner: "Rajesh Kapoor",
+    owner: "Ashwathaman",
     impact_reason: "Key executive metric slide 4 and investor earnings commentary",
     sections: ["Consolidated Gross Margin", "Cost Inflation Impact Analysis"],
     last_updated: "1 week ago",
@@ -464,7 +464,7 @@ export const GROSS_MARGIN_AFFECTED_ASSETS: AffectedAssetItem[] = [
     id: "rep_08",
     name: "Executive Summary Memo",
     type: "report",
-    owner: "Rajesh Kapoor",
+    owner: "Ashwathaman",
     impact_reason: "Weekly executive brief metric overview",
     sections: ["Key Financial KPIs", "Margin Variance Flash"],
     last_updated: "Yesterday",
@@ -476,7 +476,7 @@ export const GROSS_MARGIN_AFFECTED_ASSETS: AffectedAssetItem[] = [
     id: "ins_01",
     name: "European Margin Contraction — Root Cause",
     type: "saved_insight",
-    owner: "Rajesh Kapoor",
+    owner: "Ashwathaman",
     impact_reason: "Saved insight explaining European gross margin drop from 31.4% to 27.2%",
     last_updated: "24 Sep 2026",
     severity: "high"
@@ -593,7 +593,7 @@ export const GROSS_MARGIN_AFFECTED_ASSETS: AffectedAssetItem[] = [
     id: "ins_14",
     name: "Executive KPI Snapshot Q3",
     type: "saved_insight",
-    owner: "Rajesh Kapoor",
+    owner: "Ashwathaman",
     impact_reason: "Consolidated quarterly leadership scoreboard snapshot",
     last_updated: "01 Sep 2026",
     severity: "high"
@@ -1160,7 +1160,7 @@ export function runMetricSimulation(
   proposedFormula: string,
   changeType: ChangeType = "formula_change",
   scope = { region: "Europe", period: "Q3 2026" },
-  userName = "Rajesh Kapoor"
+  userName = "Ashwathaman"
 ): SimulationResult {
   const metric = IMPACT_METRICS_CATALOG[metricId] || IMPACT_METRICS_CATALOG.gross_margin;
 
@@ -1431,7 +1431,7 @@ const INITIAL_SIMULATION_AUDIT: SimulationAuditRecord[] = [
     metric_name: "Gross Margin",
     current_version: "v2.1",
     proposed_version: "Draft",
-    user_name: "Rajesh Kapoor",
+    user_name: "Ashwathaman",
     user_role: "Executive",
     timestamp: "2026-09-26 14:15:22",
     change_type: "formula_change",

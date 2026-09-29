@@ -11,6 +11,7 @@ from app.api.insights import router as insights_router
 from app.api.time_machine import router as time_machine_router
 from app.api.impact import router as impact_router
 from app.api.firewall import router as firewall_router
+from app.api.auth import router as auth_router
 
 app = FastAPI(
     title="MetricMind — Agentic Semantic BI Engine",
@@ -28,6 +29,7 @@ app.add_middleware(
 )
 
 # Include Routers
+app.include_router(auth_router)
 app.include_router(chat_router)
 app.include_router(metrics_router)
 app.include_router(analytics_router)

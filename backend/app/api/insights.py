@@ -17,7 +17,7 @@ class SaveInsightRequest(BaseModel):
     drivers: Any
     filters: Dict[str, Any] = {}
     semantic_definition: str
-    created_by: str = "Rajesh Kapoor"
+    created_by: str = "Ashwathaman"
 
 @router.get("")
 async def get_saved_insights():

@@ -107,7 +107,7 @@ export const INITIAL_FIREWALL_AUDIT_LOGS: FirewallAuditLogEntry[] = [
   {
     request_id: "REQ-82931",
     timestamp: "2026-09-28T03:45:12Z",
-    user: "Rajesh Kapoor",
+    user: "Ashwathaman",
     user_role: "Executive",
     question: "Show European sales",
     resolved_metric: "Revenue",
@@ -174,7 +174,7 @@ export const INITIAL_FIREWALL_AUDIT_LOGS: FirewallAuditLogEntry[] = [
   {
     request_id: "REQ-82927",
     timestamp: "2026-09-28T03:12:44Z",
-    user: "Rajesh Kapoor",
+    user: "Ashwathaman",
     user_role: "Executive",
     question: "Show gross margin by country",
     resolved_metric: "Gross Margin %",

@@ -97,10 +97,10 @@ class WarehouseDatabase:
 
     def _seed_metadata(self, cursor):
         initial_history = [
-            ("QH_001", "Why did our European margins drop last quarter?", "Executive", "Rajesh Kapoor", "gross_margin", json.dumps(["region", "country"]), json.dumps({"region": "Europe", "period": "Q2 2026 vs Q1 2026"}), "European gross margin declined from 31.4% to 27.2% (-4.2 pp). Logistics and raw materials were the primary drivers.", 342.5, "Completed", "2026-09-24 10:15:00"),
+            ("QH_001", "Why did our European margins drop last quarter?", "Executive", "Ashwathaman", "gross_margin", json.dumps(["region", "country"]), json.dumps({"region": "Europe", "period": "Q2 2026 vs Q1 2026"}), "European gross margin declined from 31.4% to 27.2% (-4.2 pp). Logistics and raw materials were the primary drivers.", 342.5, "Completed", "2026-09-24 10:15:00"),
             ("QH_002", "What was our total revenue growth this quarter?", "Finance Analyst", "Meera Iyer", "revenue", json.dumps(["quarter"]), json.dumps({"period": "Q2 2026"}), "Total revenue reached ₹48.6 Cr, a +12.4% quarter-over-quarter expansion.", 215.0, "Completed", "2026-09-24 09:30:00"),
             ("QH_003", "Which region has the highest gross margin?", "Admin", "Priya Sharma", "gross_margin", json.dumps(["region"]), json.dumps({"period": "Q2 2026"}), "India recorded the highest gross margin at 38.2%, followed by North America at 34.1%.", 280.0, "Completed", "2026-09-23 16:45:00"),
-            ("QH_004", "Show churn rate trend across customer tiers", "Executive", "Rajesh Kapoor", "churn_rate", json.dumps(["customer_segment"]), json.dumps({"period": "Q2 2026"}), "Overall customer churn rate sits at 4.8%, with Enterprise segment at 1.2%.", 195.0, "Completed", "2026-09-23 11:20:00")
+            ("QH_004", "Show churn rate trend across customer tiers", "Executive", "Ashwathaman", "churn_rate", json.dumps(["customer_segment"]), json.dumps({"period": "Q2 2026"}), "Overall customer churn rate sits at 4.8%, with Enterprise segment at 1.2%.", 195.0, "Completed", "2026-09-23 11:20:00")
         ]
 
         for item in initial_history:
@@ -122,7 +122,7 @@ class WarehouseDatabase:
                 {"driver": "Logistics & Freight", "impact": "-2.1 pp", "change": "+38.4%"},
                 {"driver": "Raw Materials", "impact": "-1.4 pp", "change": "+24.1%"},
                 {"driver": "Cloud Infrastructure", "impact": "-0.7 pp", "change": "+8.2%"}
-            ]), json.dumps({"region": "Europe", "period": "Q2 2026"}), "((Revenue - Cost) / Revenue) * 100", "Rajesh Kapoor", "2026-09-24 10:20:00"),
+            ]), json.dumps({"region": "Europe", "period": "Q2 2026"}), "((Revenue - Cost) / Revenue) * 100", "Ashwathaman", "2026-09-24 10:20:00"),
             
             ("INS_002", "India Expansion & High Profitability Corridor", "Which region has the highest margin?", "gross_margin", "India is delivering highest gross margins company-wide (38.2%) on ₹12.4 Cr revenue, demonstrating strong pricing power in Enterprise SaaS.", "bar", json.dumps([
                 {"name": "India", "margin": 38.2, "revenue": 124000000},

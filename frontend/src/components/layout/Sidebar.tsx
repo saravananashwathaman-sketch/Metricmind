@@ -23,7 +23,8 @@ import {
   Check,
   Clock,
   Wand2,
-  ShieldAlert
+  ShieldAlert,
+  LogOut
 } from "lucide-react";
 import { Role, UserProfile } from "@/types";
 
@@ -57,6 +58,7 @@ interface SidebarProps {
   onChangeRole: (role: Role) => void;
   isDemoMode: boolean;
   userProfile?: UserProfile;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -66,7 +68,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleCollapse,
   userRole,
   isDemoMode,
-  userProfile
+  userProfile,
+  onLogout
 }) => {
   const navItems: { id: NavTab; label: string; icon: React.ReactNode; badge?: string }[] = [
     { id: "overview", label: "Executive Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -238,8 +241,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* User profile & active role (Clickable Profile Card) */}
         {(() => {
           const isProfileActive = activeTab === "profile";
-          const displayName = userProfile?.name || "Rajesh Kapoor";
-          const displayInitials = userProfile?.initials || "RK";
+          const displayName = userProfile?.name || "Ashwathaman";
+          const displayInitials = userProfile?.initials || "A";
           const displayRole = userRole || userProfile?.role || "Executive";
           const displayAvatar = userProfile?.avatar_url;
 
@@ -319,6 +322,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {isDemoMode ? "DEMO MODE" : "PRODUCTION"}
             </span>
           </div>
+        )}
+
+        {/* Sign Out Button */}
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            title={collapsed ? "Sign Out" : undefined}
+            className={`w-full flex items-center justify-center gap-2 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all cursor-pointer ${
+              collapsed ? "px-2" : "px-3"
+            }`}
+          >
+            <LogOut className="w-3.5 h-3.5 shrink-0" />
+            {!collapsed && <span>Sign Out</span>}
+          </button>
         )}
       </div>
     </aside>
