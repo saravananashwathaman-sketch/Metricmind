@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_USER_PROFILE } from "@/lib/mockData";
-import { UserProfile } from "@/types";
-
-// In-memory runtime profile state for local / demo mode
-let currentProfile: UserProfile = { ...DEFAULT_USER_PROFILE };
+import { getCurrentProfile, setCurrentProfile } from "@/lib/userStore";
 
 export async function GET() {
-  return NextResponse.json(currentProfile, {
+  const profile = getCurrentProfile();
+  return NextResponse.json(profile, {
     status: 200,
     headers: {
       "Cache-Control": "no-store",
@@ -31,6 +28,7 @@ export async function PUT(request: Request) {
       }
     }
 
+    const currentProfile = getCurrentProfile();
     // Compute initials if name was provided
     let initials = currentProfile.initials;
     if (updates.name) {
@@ -43,14 +41,15 @@ export async function PUT(request: Request) {
         .slice(0, 2) || "A";
     }
 
-    currentProfile = {
+    const updatedProfile = {
       ...currentProfile,
       ...updates,
       initials,
       last_active: "Just now"
     };
+    setCurrentProfile(updatedProfile);
 
-    return NextResponse.json(currentProfile, {
+    return NextResponse.json(updatedProfile, {
       status: 200,
       headers: { "Cache-Control": "no-store" }
     });

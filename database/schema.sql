@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS customers CASCADE;
 DROP TABLE IF EXISTS regions CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 -- ------------------------------------------------------------------------------
 -- A. regions
@@ -142,3 +143,24 @@ CREATE INDEX idx_orders_status ON orders(order_status);
 CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX idx_order_items_product_id ON order_items(product_id);
 CREATE INDEX idx_audit_created_at ON query_audit_logs(created_at DESC);
+
+-- ------------------------------------------------------------------------------
+-- I. users (Enterprise User & Authentication Store)
+-- ------------------------------------------------------------------------------
+CREATE TABLE users (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    organization VARCHAR(150) NOT NULL,
+    job_title VARCHAR(100),
+    department VARCHAR(100),
+    role VARCHAR(50) NOT NULL DEFAULT 'Executive',
+    status VARCHAR(50) NOT NULL DEFAULT 'active',
+    email_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_organization ON users(organization);

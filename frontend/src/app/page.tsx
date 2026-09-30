@@ -61,10 +61,11 @@ export function MetricMindApp({ initialTab = "overview" }: { initialTab?: NavTab
         name: user.name || prev.name,
         email: user.email || prev.email,
         role: (user.role as Role) || prev.role,
-        initials: user.initials || prev.initials,
-        title: user.title || prev.title,
+        title: user.title || (user as any).job_title || prev.title,
+        job_title: (user as any).job_title || user.title || prev.job_title,
         department: user.department || prev.department,
-        organization: user.organization || prev.organization
+        organization: user.organization || prev.organization,
+        status: (user as any).status || prev.status
       }));
     }
   }, [user, isDemo]);

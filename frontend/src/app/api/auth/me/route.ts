@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DEFAULT_USER_PROFILE } from "@/lib/mockData";
+import { getCurrentProfile } from "@/lib/userStore";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -12,9 +12,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  // Valid session token check
+  // Valid session token check with current active profile
   return NextResponse.json({
     authenticated: true,
-    user: DEFAULT_USER_PROFILE
+    user: getCurrentProfile()
   });
 }

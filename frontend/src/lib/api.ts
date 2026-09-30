@@ -300,6 +300,44 @@ export const api = {
     }
   },
 
+  async signup(payload: {
+    name: string;
+    email: string;
+    organization: string;
+    jobTitle?: string;
+    department?: string;
+    password: string;
+  }): Promise<AuthSession> {
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "We couldn't create your account right now. Please try again.");
+      }
+      return data;
+    } catch (e: any) {
+      if (e.message && !e.message.includes("couldn't create your account") && !e.message.includes("Please")) {
+        try {
+          const res = await fetch(`${API_BASE}/api/auth/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (res.ok) return data;
+          throw new Error(data.detail || data.error || "We couldn't create your account right now. Please try again.");
+        } catch (apiErr: any) {
+          throw new Error(apiErr.message || "Unable to connect to the registration service. Please try again.");
+        }
+      }
+      throw e;
+    }
+  },
+
   async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
     try {
       const res = await fetch("/api/auth/forgot-password", {

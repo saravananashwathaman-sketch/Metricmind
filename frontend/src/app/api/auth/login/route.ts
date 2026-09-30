@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { DEFAULT_USER_PROFILE } from "@/lib/mockData";
+import { verifyUserPassword, sanitizeUser, setCurrentProfile } from "@/lib/userStore";
 
 const MOCK_USERS_BY_EMAIL: Record<string, any> = {
   "ashwathaman@metricmind.com": {
@@ -76,14 +77,62 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Matched predefined enterprise user
+    // 1. Check userStore (contains seed accounts & newly created accounts)
+    const storedUser = verifyUserPassword(cleanEmail, cleanPassword);
+    if (storedUser) {
+      const isDemo = cleanEmail === "demo@metricmind.app";
+      const token = `mm_token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
+      const expiresAt = Date.now() + (remember_me ? 30 * 86400 * 1000 : 86400 * 1000);
+      const sanitized = sanitizeUser(storedUser);
+
+      // Synchronize active runtime profile
+      setCurrentProfile({
+        ...DEFAULT_USER_PROFILE,
+        id: storedUser.id,
+        name: storedUser.name,
+        email: storedUser.email,
+        initials: storedUser.initials,
+        role: storedUser.role,
+        title: storedUser.job_title,
+        job_title: storedUser.job_title,
+        department: storedUser.department,
+        organization: storedUser.organization,
+        status: storedUser.status,
+        last_active: "Active Now"
+      });
+
+      const response = NextResponse.json({
+        success: true,
+        token,
+        expires_at: expiresAt,
+        user: sanitized,
+        is_demo: isDemo
+      });
+
+      response.cookies.set("mm_session_token", token, {
+        path: "/",
+        sameSite: "lax",
+        maxAge: remember_me ? 30 * 86400 : 86400,
+        httpOnly: false
+      });
+
+      return response;
+    }
+
+    // 2. Fallback check for predefined enterprise users
     if (MOCK_USERS_BY_EMAIL[cleanEmail]) {
       const u = MOCK_USERS_BY_EMAIL[cleanEmail];
       const isDemo = cleanEmail === "demo@metricmind.app";
       const token = `mm_token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
       const expiresAt = Date.now() + (remember_me ? 30 * 86400 * 1000 : 86400 * 1000);
 
-      return NextResponse.json({
+      setCurrentProfile({
+        ...DEFAULT_USER_PROFILE,
+        ...u,
+        last_active: "Active Now"
+      });
+
+      const response = NextResponse.json({
         success: true,
         token,
         expires_at: expiresAt,
@@ -94,11 +143,22 @@ export async function POST(request: Request) {
           role: u.role,
           initials: u.initials,
           title: u.title,
+          job_title: u.title,
           department: u.department,
-          organization: u.organization
+          organization: u.organization,
+          status: "active"
         },
         is_demo: isDemo
       });
+
+      response.cookies.set("mm_session_token", token, {
+        path: "/",
+        sameSite: "lax",
+        maxAge: remember_me ? 30 * 86400 : 86400,
+        httpOnly: false
+      });
+
+      return response;
     }
 
     // 2. Generic enterprise domain user (e.g. employee@company.com)

@@ -42,6 +42,7 @@ import { UserProfile, Role } from "@/types";
 import { DEFAULT_USER_PROFILE } from "@/lib/mockData";
 import { api } from "@/lib/api";
 import { NavTab } from "@/components/layout/Sidebar";
+import { useAuth } from "@/lib/authContext";
 
 interface ProfileViewProps {
   userRole?: Role;
@@ -66,6 +67,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onProfileUpdated,
   onLogout
 }) => {
+  const { user: authUser } = useAuth();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_USER_PROFILE);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -114,17 +116,43 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
   useEffect(() => {
     loadProfileData();
-  }, []);
+  }, [authUser]);
 
   const loadProfileData = async () => {
     setLoading(true);
     try {
       const data = await api.getProfile();
-      setProfile(data);
-      setPreferences(data.preferences);
-      setNotifications(data.notifications);
+      // If authUser is available, give it priority for core identity fields
+      const merged: UserProfile = {
+        ...data,
+        name: authUser?.name || data.name,
+        email: authUser?.email || data.email,
+        role: (authUser?.role as Role) || data.role,
+        initials: authUser?.initials || data.initials,
+        title: authUser?.title || (authUser as any)?.job_title || data.title,
+        job_title: (authUser as any)?.job_title || authUser?.title || data.job_title,
+        department: authUser?.department || data.department,
+        organization: authUser?.organization || data.organization,
+        status: (authUser as any)?.status || data.status || "active"
+      };
+      setProfile(merged);
+      setPreferences(data.preferences || DEFAULT_USER_PROFILE.preferences);
+      setNotifications(data.notifications || DEFAULT_USER_PROFILE.notifications);
     } catch (e) {
-      console.warn("Using default profile state", e);
+      if (authUser) {
+        setProfile((prev) => ({
+          ...prev,
+          name: authUser.name || prev.name,
+          email: authUser.email || prev.email,
+          role: (authUser.role as Role) || prev.role,
+          initials: authUser.initials || prev.initials,
+          title: authUser.title || (authUser as any)?.job_title || prev.title,
+          job_title: (authUser as any)?.job_title || authUser.title || prev.job_title,
+          department: authUser.department || prev.department,
+          organization: authUser.organization || prev.organization,
+          status: (authUser as any)?.status || prev.status || "active"
+        }));
+      }
     } finally {
       setLoading(false);
     }

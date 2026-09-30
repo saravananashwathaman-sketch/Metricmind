@@ -457,8 +457,20 @@ function LoginForm() {
             </div>
           </div>
 
+          {/* Don't have an account? Create an account */}
+          <div className="mt-4 pt-3.5 border-t border-slate-800/70 text-center text-xs text-slate-400">
+            <span>Don&apos;t have an account? </span>
+            <Link
+              href="/signup"
+              className="text-sky-400 hover:text-sky-300 font-semibold hover:underline underline-offset-2 transition-all cursor-pointer inline-flex items-center gap-1 group"
+            >
+              <span>Create an account</span>
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
+
           {/* Security Message */}
-          <div className="mt-5 pt-3.5 border-t border-slate-800/60 flex items-center justify-center gap-2 text-[11px] text-slate-400 text-center">
+          <div className="mt-3.5 pt-3 border-t border-slate-800/50 flex items-center justify-center gap-2 text-[11px] text-slate-400 text-center">
             <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span>Your business data stays governed and protected.</span>
           </div>

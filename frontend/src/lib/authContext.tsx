@@ -12,6 +12,14 @@ interface AuthContextType {
   isDemo: boolean;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<AuthSession>;
   loginDemo: (role?: Role) => Promise<AuthSession>;
+  signup: (payload: {
+    name: string;
+    email: string;
+    organization: string;
+    jobTitle?: string;
+    department?: string;
+    password: string;
+  }) => Promise<AuthSession>;
   logout: () => Promise<void>;
 }
 
@@ -82,6 +90,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return authSession;
   }, []);
 
+  const signup = useCallback(async (payload: {
+    name: string;
+    email: string;
+    organization: string;
+    jobTitle?: string;
+    department?: string;
+    password: string;
+  }): Promise<AuthSession> => {
+    const authSession = await api.signup(payload);
+    setSession(authSession);
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(authSession));
+        document.cookie = `mm_session_token=${authSession.token}; path=/; SameSite=Lax`;
+      } catch (e) {
+        console.warn("Could not persist session to localStorage", e);
+      }
+    }
+
+    return authSession;
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await api.logout();
@@ -105,6 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isDemo: !!session?.is_demo,
     login,
     loginDemo,
+    signup,
     logout
   };
 
