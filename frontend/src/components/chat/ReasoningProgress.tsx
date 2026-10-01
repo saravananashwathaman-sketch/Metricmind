@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { CheckCircle2, Loader2, Circle, ShieldCheck } from "lucide-react";
+import React, { useState } from "react";
+import { CheckCircle2, Loader2, Circle, ChevronDown, ChevronUp, ShieldCheck } from "lucide-react";
 import { AgentStep } from "@/types";
 
 interface ReasoningProgressProps {
@@ -12,73 +12,100 @@ interface ReasoningProgressProps {
 
 export const ReasoningProgress: React.FC<ReasoningProgressProps> = ({
   steps,
-  currentStepIndex = 12,
-  isComplete
+  currentStepIndex = 5,
+  isComplete,
 }) => {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  // High-level safe execution stages
+  const safeStages = [
+    { id: 1, title: "Intent identified", detail: "Natural language query semantics analyzed" },
+    { id: 2, title: "Metric resolved", detail: "Mapped to governed semantic catalog definition" },
+    { id: 3, title: "Semantic query validated", detail: "Zero-trust firewall passed without raw SQL" },
+    { id: 4, title: "Cube API queried", detail: "Cube semantic load executed on PostgreSQL" },
+    { id: 5, title: "Result analyzed", detail: "Variance decomposition and drivers calculated" },
+  ];
+
   return (
-    <div className="p-4 rounded-2xl bg-slate-900/90 border border-sky-500/20 shadow-xl backdrop-blur-xl space-y-3">
-      <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-sky-400" />
-          <span className="text-xs font-bold text-slate-200 tracking-wide">
-            Agentic Semantic BI Orchestrator
+    <div className="rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm overflow-hidden transition-all">
+      {/* Stepper Header */}
+      <div className="flex items-center justify-between px-5 py-3.5 bg-[#0F172A] border-b border-[#334155]">
+        <div className="flex items-center gap-2.5">
+          <ShieldCheck className="w-4 h-4 text-[#06B6D4]" />
+          <span className="text-xs font-semibold text-[#F8FAFC]">
+            Governed Execution Pipeline
           </span>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-3">
           {!isComplete ? (
-            <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-sky-400">
+            <span className="inline-flex items-center gap-1.5 text-xs text-[#06B6D4] font-medium">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
               Reasoning over Governed Semantics...
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-              <CheckCircle2 className="w-3 h-3" />
-              100% Governed (Zero Rogue SQL)
+            <span className="inline-flex items-center gap-1.5 text-xs text-[#10B981] font-medium bg-[#10B981]/10 px-2 py-0.5 rounded-md border border-[#10B981]/30">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Governance Verified
             </span>
           )}
+
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-1 rounded-md text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#1E293B] transition-colors cursor-pointer"
+            title={isExpanded ? "Collapse" : "Expand"}
+          >
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-        {steps.map((step, idx) => {
-          const isDone = isComplete || idx < currentStepIndex;
-          const isCurrent = !isComplete && idx === currentStepIndex;
+      {/* Expandable Stepper Content */}
+      {isExpanded && (
+        <div className="p-5 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+            {safeStages.map((stage, idx) => {
+              const isStageDone = isComplete || idx < Math.min(safeStages.length, Math.ceil((currentStepIndex / 12) * 5));
+              const isStageActive = !isComplete && idx === Math.min(safeStages.length - 1, Math.floor((currentStepIndex / 12) * 5));
 
-          return (
-            <div
-              key={step.step_number}
-              className={`flex items-start gap-2.5 p-2 rounded-xl transition-all ${
-                isDone
-                  ? "bg-slate-950/60 border border-slate-800/80 text-slate-200"
-                  : isCurrent
-                  ? "bg-sky-500/10 border border-sky-500/30 text-sky-200 shadow-sm"
-                  : "opacity-40 text-slate-500"
-              }`}
-            >
-              <div className="mt-0.5 shrink-0">
-                {isDone ? (
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                ) : isCurrent ? (
-                  <Loader2 className="w-3.5 h-3.5 text-sky-400 animate-spin" />
-                ) : (
-                  <Circle className="w-3.5 h-3.5 text-slate-600" />
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-[11px] truncate">{step.title}</span>
-                  {step.timestamp_ms > 0 && isDone && (
-                    <span className="text-[9px] font-mono text-slate-500">
-                      {step.timestamp_ms}ms
+              return (
+                <div
+                  key={stage.id}
+                  className={`p-3 rounded-xl border text-xs transition-colors flex flex-col justify-between space-y-2 ${
+                    isStageDone
+                      ? "bg-[#0F172A] border-[#334155] text-[#F8FAFC]"
+                      : isStageActive
+                      ? "bg-[#4F46E5]/10 border-[#4F46E5]/40 text-[#F8FAFC]"
+                      : "bg-[#0F172A]/40 border-transparent text-[#64748B]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-mono uppercase font-bold text-[#64748B]">
+                      Step {stage.id}
                     </span>
-                  )}
+                    {isStageDone ? (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
+                    ) : isStageActive ? (
+                      <Loader2 className="w-3.5 h-3.5 text-[#06B6D4] animate-spin" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-[#64748B]" />
+                    )}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-xs text-[#F8FAFC]">
+                      {stage.title}
+                    </div>
+                    <p className="text-[11px] text-[#94A3B8] mt-0.5 line-clamp-2">
+                      {stage.detail}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-[10px] text-slate-400 truncate mt-0.5">{step.detail}</p>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  History,
   Clock,
-  Sparkles,
   ShieldCheck,
   Calendar,
   MapPin,
   GitCompare,
   Layers,
   Database,
-  ArrowRight,
-  TrendingDown,
-  RefreshCw,
-  HardDrive
 } from "lucide-react";
 import { TimeMachineNumberExplanation } from "@/types/timeMachine";
 import { api } from "@/lib/api";
@@ -32,6 +26,7 @@ import { AIExplanation } from "../time-machine/AIExplanation";
 import { ReproductionResult } from "../time-machine/ReproductionResult";
 import { AuditTrail } from "../time-machine/AuditTrail";
 import { TimeMachineSearch } from "../time-machine/TimeMachineSearch";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
 
 interface TimeMachineViewProps {
   onAskQuestion?: (q: string) => void;
@@ -44,7 +39,7 @@ export const TimeMachineView: React.FC<TimeMachineViewProps> = ({
   onAskQuestion,
   initialMetricId = "gross_margin",
   initialPeriod = "Q3 2026",
-  initialRegion = "Europe"
+  initialRegion = "Europe",
 }) => {
   const [metricId, setMetricId] = useState(initialMetricId);
   const [period, setPeriod] = useState(initialPeriod);
@@ -88,35 +83,29 @@ export const TimeMachineView: React.FC<TimeMachineViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
-      {/* Signature Feature Banner */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 shadow-2xl overflow-hidden backdrop-blur-xl">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-sky-500/20 to-indigo-500/20 text-sky-300 border border-sky-500/30 text-xs font-bold uppercase tracking-wider">
-              <History className="w-3.5 h-3.5 text-sky-400" />
-              <span>MetricMind Time Machine • Signature Feature</span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
-              Explain This Number
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl">
-              &quot;Never lose the history behind a number.&quot; Reconstruct how any business value was calculated past or present, explore definition changes, inspect immutable snapshots, and verify bit-for-bit repeatability.
-            </p>
+    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
+      {/* Exact Requested Header & Subheading */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#334155]">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#06B6D4]/15 text-[#06B6D4] border border-[#06B6D4]/30">
+              Metric Intelligence
+            </span>
           </div>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0">
-            <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800 text-center sm:text-right">
-              <span className="text-[10px] text-slate-400 uppercase font-mono block">Active Snapshot</span>
-              <span className="text-xs font-bold text-sky-300 font-mono">
-                {explanation?.snapshot.id || "SNAP-2026-Q3-EU-001"}
-              </span>
-            </div>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F8FAFC] tracking-tight flex items-center gap-2.5">
+            <Clock className="w-6 h-6 text-[#06B6D4]" />
+            Explain This Number
+          </h1>
+          <p className="text-sm text-[#94A3B8]">
+            Understand exactly how this metric was calculated.
+          </p>
         </div>
 
-        {/* Ambient glow */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono text-[#94A3B8] bg-[#1E293B] px-3 py-1.5 rounded-xl border border-[#334155]">
+            Snapshot: {explanation?.snapshot.id || "SNAP-2026-Q3-EU-001"}
+          </span>
+        </div>
       </div>
 
       {/* Time Machine Search Bar */}
@@ -130,69 +119,84 @@ export const TimeMachineView: React.FC<TimeMachineViewProps> = ({
 
       {!isUnavailable && explanation && (
         <>
-          {/* Key Value Overview Strip */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 shadow-xl flex flex-wrap items-center justify-between gap-4">
+          {/* Exact Requested Metadata Strip: Metric, Value, Period, Region, Definition Version, Governance Status */}
+          <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-wrap items-center gap-6 sm:gap-10">
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Metric</span>
-                <span className="text-base sm:text-lg font-black text-slate-100">{explanation.metric.name}</span>
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Metric
+                </span>
+                <span className="text-base font-bold text-[#F8FAFC]">
+                  {explanation.metric.name}
+                </span>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Current Value</span>
-                <span className="text-2xl font-black text-sky-400 font-mono tracking-tight">
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Value
+                </span>
+                <span className="text-2xl font-bold text-[#F8FAFC] font-mono tracking-tight">
                   {explanation.value.formatted_display}
                 </span>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Period</span>
-                <span className="text-sm font-bold text-slate-200 font-mono flex items-center gap-1 mt-0.5">
-                  <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Period
+                </span>
+                <span className="text-sm font-semibold text-[#F8FAFC] font-mono flex items-center gap-1.5 mt-0.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#06B6D4]" />
                   {period}
                 </span>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Region</span>
-                <span className="text-sm font-bold text-slate-200 flex items-center gap-1 mt-0.5">
-                  <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Region
+                </span>
+                <span className="text-sm font-semibold text-[#F8FAFC] flex items-center gap-1.5 mt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#4F46E5]" />
                   {region}
                 </span>
               </div>
 
               <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Active Definition</span>
-                <span className="text-sm font-bold text-indigo-300 font-mono mt-0.5 block">
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Definition Version
+                </span>
+                <span className="text-sm font-semibold text-[#F8FAFC] font-mono mt-0.5 block">
                   {selectedVersion}
                 </span>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" />
-                Verified Semantic Governance
-              </span>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#64748B] tracking-wider block">
+                  Governance Status
+                </span>
+                <div className="mt-0.5">
+                  <StatusBadge status="verified" label="Verified Passed" />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-1 border-b border-slate-800 bg-slate-900/60 p-1.5 rounded-2xl overflow-x-auto text-xs">
+          <div className="flex items-center gap-1 border-b border-[#334155] bg-[#0F172A] p-1.5 rounded-xl overflow-x-auto text-xs">
             {[
-              { id: "reconstruction", label: "Reconstruction & Formula Flow", icon: <Clock className="w-4 h-4" /> },
+              { id: "reconstruction", label: "Calculation Flow & Timeline", icon: <Clock className="w-4 h-4" /> },
               { id: "snapshot", label: "Data Snapshot & Filters", icon: <Database className="w-4 h-4" /> },
               { id: "lineage", label: "Lineage & Dependencies", icon: <Layers className="w-4 h-4" /> },
-              { id: "comparison", label: "Historical Comparison & Moments", icon: <GitCompare className="w-4 h-4" /> },
-              { id: "audit", label: "Governance & Audit Trail", icon: <ShieldCheck className="w-4 h-4" /> }
+              { id: "comparison", label: "Historical Comparison", icon: <GitCompare className="w-4 h-4" /> },
+              { id: "audit", label: "Governance & Audit Trail", icon: <ShieldCheck className="w-4 h-4" /> },
             ].map((tab) => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold whitespace-nowrap transition-all ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? "bg-sky-500 text-slate-950 shadow-md shadow-sky-500/20"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                    ? "bg-[#1E293B] text-[#F8FAFC] border border-[#334155]"
+                    : "text-[#94A3B8] hover:text-[#F8FAFC]"
                 }`}
               >
                 {tab.icon}
@@ -227,6 +231,7 @@ export const TimeMachineView: React.FC<TimeMachineViewProps> = ({
                   affectedDashboards={14}
                   affectedReports={8}
                   affectedSavedInsights={23}
+                  affectedDependentMetrics={4}
                 />
 
                 <MetricVersionCard

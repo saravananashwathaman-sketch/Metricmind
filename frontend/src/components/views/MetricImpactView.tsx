@@ -3,23 +3,12 @@
 import React, { useState, useEffect } from "react";
 import {
   Wand2,
-  Sliders,
-  Database,
-  Layers,
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
-  AlertTriangle,
   FileText,
-  History,
-  Info,
-  Clock,
-  Send,
-  Download,
   BookmarkCheck,
-  RefreshCw,
-  Eye,
-  Check
+  Download,
+  Send,
 } from "lucide-react";
 import { MetricSelector } from "@/components/impact/MetricSelector";
 import { DefinitionEditor } from "@/components/impact/DefinitionEditor";
@@ -36,18 +25,19 @@ import { GovernanceValidation } from "@/components/impact/GovernanceValidation";
 import { AIAgentSimulationPrompt } from "@/components/impact/AIAgentSimulationPrompt";
 import { SimulationAudit } from "@/components/impact/SimulationAudit";
 import { ImpactReportModal } from "@/components/impact/ImpactReportModal";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
+import { PrimaryButton, SecondaryButton } from "@/components/design-system/Buttons";
 
 import {
   ChangeType,
   SimulationResult,
   StrictSimulationContract,
-  SimulationAuditRecord
+  SimulationAuditRecord,
 } from "@/types/impact";
 import {
   IMPACT_METRICS_CATALOG,
   runMetricSimulation,
   getAuditTrail,
-  updateAuditStatus
 } from "@/lib/impactSimulator";
 import { api } from "@/lib/api";
 import { Role } from "@/types";
@@ -65,9 +55,8 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
   initialFormula,
   isHistoricalMode = false,
   userRole = "Executive",
-  onNavigateTab
+  onNavigateTab,
 }) => {
-  // State
   const [selectedMetricId, setSelectedMetricId] = useState(initialMetricId);
   const [changeType, setChangeType] = useState<ChangeType>("formula_change");
   const [proposedFormula, setProposedFormula] = useState(
@@ -82,7 +71,6 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
 
   const metric = IMPACT_METRICS_CATALOG[selectedMetricId] || IMPACT_METRICS_CATALOG.gross_margin;
 
-  // Load initial simulation on mount
   useEffect(() => {
     executeSimulation();
     loadAudit();
@@ -95,18 +83,16 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
   const executeSimulation = async () => {
     setIsRunning(true);
     try {
-      // Deterministic simulation
       const res = await api.simulateMetricImpact({
         metric: selectedMetricId,
         change_type: changeType,
         formula: proposedFormula,
-        user_name: userRole === "Admin" ? "Priya Sharma" : "Ashwathaman"
+        user_name: userRole === "Admin" ? "Priya Sharma" : "Ashwathaman",
       });
 
       if (res.simulation) {
         setSimulation(res.simulation);
       } else {
-        // Direct engine fallback
         const localSim = runMetricSimulation(
           selectedMetricId,
           proposedFormula,
@@ -166,70 +152,63 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
   };
 
   return (
-    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-8 animate-in fade-in duration-200">
-      {/* 1. Header (Section 5 & 39) */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-5">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
-              <Wand2 className="w-5 h-5 fill-white/20" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-black text-slate-100 tracking-tight">
-                  Metric Impact Simulator
-                </h1>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-300 border border-sky-500/20">
-                  Predictive BI
-                </span>
-                {isHistoricalMode && (
-                  <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                    HISTORICAL SIMULATION
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Understand the downstream impact before changing a governed business metric.
-              </p>
-            </div>
+    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#334155]">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
+              Financial Modeling Sandbox
+            </span>
+            {isHistoricalMode && (
+              <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-[#8B5CF6]/15 text-[#8B5CF6] border border-[#8B5CF6]/30">
+                Historical Simulation
+              </span>
+            )}
           </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F8FAFC] tracking-tight flex items-center gap-2.5">
+            <Wand2 className="w-6 h-6 text-[#F59E0B]" />
+            Metric Impact Simulator
+          </h1>
+          <p className="text-sm text-[#94A3B8]">
+            Model downstream ripple effects and blast radius before changing a governed business metric.
+          </p>
         </div>
 
         {/* Global Controls & Status Badges */}
-        <div className="flex items-center gap-3">
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-            <span className="font-mono text-[11px]">DEMO MODE (MOCK LAYER)</span>
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
+            <span>SANDBOX</span>
           </span>
-
-          <span className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4" />
-            <span>Sandbox Boundary: Enforced</span>
+          <span className="text-xs font-mono font-bold px-3 py-1.5 rounded-xl bg-[#0F172A] text-[#94A3B8] border border-[#334155]">
+            READ ONLY
           </span>
+          <StatusBadge status="verified" label="Production Data Unchanged" size="md" />
         </div>
       </div>
 
       {/* Success Notification Banner */}
       {saveSuccessNotice && (
-        <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-2 animate-in slide-in-from-top-2 duration-150">
+        <div className="p-4 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-xs font-semibold flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 shrink-0" />
           <span>{saveSuccessNotice}</span>
         </div>
       )}
 
-      {/* 2. AI Natural Language Prompt Bar (Section 19 & 20) */}
+      {/* AI Simulation Prompt */}
       <AIAgentSimulationPrompt
         selectedMetricId={selectedMetricId}
         onApplyContract={handleApplyAiContract}
       />
 
-      {/* 3. Metric Selector (Section 3) */}
+      {/* Metric Selector */}
       <MetricSelector
         selectedMetricId={selectedMetricId}
         onSelectMetric={handleSelectMetric}
       />
 
-      {/* 4. Proposed Definition Editor (Section 4 & 5) */}
+      {/* Proposed Definition Editor */}
       <DefinitionEditor
         metric={metric}
         changeType={changeType}
@@ -241,7 +220,7 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
         onReset={handleReset}
       />
 
-      {/* 5. Governance Assertion Validation Gate (Section 18) */}
+      {/* Governance Assertion Validation Gate */}
       {simulation && (
         <GovernanceValidation
           validation={simulation.validation}
@@ -249,12 +228,12 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
         />
       )}
 
-      {/* 6. Before vs After Value Comparison (Section 6 & 14) */}
+      {/* Side-by-Side Before vs After Comparison */}
       {simulation && !simulation.validation.blocked && (
         <CurrentVsProposedCard simulation={simulation} />
       )}
 
-      {/* 7. Downstream Impact Summary (Section 8 & 9) */}
+      {/* Downstream Impact Summary */}
       {simulation && !simulation.validation.blocked && (
         <ImpactSummary
           assessment={simulation.impact_assessment}
@@ -263,40 +242,33 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
         />
       )}
 
-      {/* 8. Interactive Downstream Dependency Graph (Section 7 & 32) */}
+      {/* Downstream Dependency Graph */}
       {simulation && !simulation.validation.blocked && (
         <DependencyGraph simulation={simulation} />
       )}
 
-      {/* 9. Sensitivity Heatmap (Section 33) */}
+      {/* Sensitivity Heatmap */}
       {simulation && !simulation.validation.blocked && (
         <ImpactHeatmap simulation={simulation} />
       )}
 
-      {/* 10. Granular Downstream Asset Cards */}
+      {/* Granular Downstream Assets */}
       {simulation && !simulation.validation.blocked && (
         <div className="space-y-6">
-          {/* Affected Dashboards (Section 11) */}
           <AffectedDashboards
             dashboards={simulation.affected_assets.filter((a) => a.type === "dashboard")}
           />
-
-          {/* Affected Reports (Section 12) */}
           <AffectedReports
             reports={simulation.affected_assets.filter((a) => a.type === "report")}
           />
-
-          {/* Dependent Derived Metrics (Section 10) */}
           <DependentMetrics metrics={simulation.dependent_metrics} />
-
-          {/* Affected Saved Queries (Section 13) */}
           <AffectedQueries
             queries={simulation.affected_assets.filter((a) => a.type === "query")}
           />
         </div>
       )}
 
-      {/* 11. What-If Multi-Scenario Modeling (Section 16 & 17) */}
+      {/* Multi-Scenario Modeling */}
       {simulation && !simulation.validation.blocked && simulation.scenarios.length > 0 && (
         <ScenarioComparison
           scenarios={simulation.scenarios}
@@ -304,54 +276,51 @@ export const MetricImpactView: React.FC<MetricImpactViewProps> = ({
         />
       )}
 
-      {/* 12. Approval Workflow Bar (Section 22) */}
+      {/* Approval Workflow Bar */}
       {simulation && !simulation.validation.blocked && (
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
-          <div className="space-y-1">
-            <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">
-              Section 22 • Approval & Export Workflow
-            </span>
-            <h4 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+        <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+          <div className="space-y-0.5">
+            <h4 className="text-sm font-semibold text-[#F8FAFC] flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
               Simulation Complete — Review Ready
             </h4>
-            <p className="text-xs text-slate-400">
-              Simulation results are stored under ID <code className="text-sky-300 font-mono">{simulation.simulation_id}</code> in Draft state.
+            <p className="text-xs text-[#94A3B8]">
+              Simulation results stored under ID <code className="text-[#06B6D4] font-mono">{simulation.simulation_id}</code> in Draft state.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <button
+            <SecondaryButton
+              size="sm"
+              icon={<BookmarkCheck className="w-3.5 h-3.5 text-[#06B6D4]" />}
               onClick={handleSaveSimulation}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors flex items-center gap-1.5"
             >
-              <BookmarkCheck className="w-3.5 h-3.5 text-sky-400" />
-              <span>Save Simulation</span>
-            </button>
+              Save Simulation
+            </SecondaryButton>
 
-            <button
+            <SecondaryButton
+              size="sm"
+              icon={<Download className="w-3.5 h-3.5 text-[#8B5CF6]" />}
               onClick={() => setIsReportModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition-colors flex items-center gap-1.5"
             >
-              <Download className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Export Impact Report</span>
-            </button>
+              Export Report
+            </SecondaryButton>
 
-            <button
+            <PrimaryButton
+              size="sm"
+              icon={<Send className="w-3.5 h-3.5" />}
               onClick={handleSubmitReview}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-sky-500/20 transition-all flex items-center gap-1.5"
             >
-              <Send className="w-3.5 h-3.5" />
-              <span>Submit for Review</span>
-            </button>
+              Submit for Review
+            </PrimaryButton>
           </div>
         </div>
       )}
 
-      {/* 13. Audit Trail Table (Section 23) */}
+      {/* Audit Trail Table */}
       <SimulationAudit auditTrail={auditRecords} />
 
-      {/* 14. Report Export & Review Modal (Section 22 & 24) */}
+      {/* Report Export & Review Modal */}
       {simulation && (
         <ImpactReportModal
           isOpen={isReportModalOpen}

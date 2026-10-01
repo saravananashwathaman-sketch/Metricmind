@@ -3,22 +3,17 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   Lock,
   Mail,
   Eye,
   EyeOff,
   ArrowRight,
-  Shield,
-  ShieldCheck,
-  Sparkles,
   AlertCircle,
   CheckCircle2,
-  SlidersHorizontal,
   ChevronRight,
   Loader2,
-  Users
+  Users,
 } from "lucide-react";
 import { BrandPanel } from "@/components/auth/BrandPanel";
 import { GoogleSsoModal } from "@/components/auth/GoogleSsoModal";
@@ -34,29 +29,24 @@ function LoginForm() {
 
   const { login, loginDemo, isAuthenticated, isLoading: authLoading } = useAuth();
 
-  // Form input states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Validation & Error states
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [generalError, setGeneralError] = useState("");
 
-  // Loading & status states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
 
-  // Modals state
   const [isGoogleModalOpen, setIsGoogleModalOpen] = useState(false);
   const [isRequestAccessModalOpen, setIsRequestAccessModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"privacy" | "terms" | "help" | null>(null);
 
-  // Read URL query errors (e.g., ?error=cancelled, ?error=not_configured)
   useEffect(() => {
     const errorParam = searchParams.get("error");
     if (errorParam) {
@@ -72,14 +62,12 @@ function LoginForm() {
     }
   }, [searchParams]);
 
-  // If already authenticated and not loading, redirect to target
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
       router.push(redirectUrl);
     }
   }, [authLoading, isAuthenticated, redirectUrl, router]);
 
-  // Validate email format
   const validateEmail = (val: string): boolean => {
     if (!val.trim()) {
       setEmailError("Email address is required.");
@@ -94,12 +82,6 @@ function LoginForm() {
     return true;
   };
 
-  // Validate password (optional for fast mail ID sign-in)
-  const validatePassword = (val: string): boolean => {
-    setPasswordError("");
-    return true;
-  };
-
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
     if (emailError) validateEmail(e.target.value);
@@ -108,29 +90,24 @@ function LoginForm() {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    if (passwordError) validatePassword(e.target.value);
     if (generalError) setGeneralError("");
   };
 
-  // Standard Form Submission (Mail ID Login)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setGeneralError("");
 
     const isEmailValid = validateEmail(email);
-    if (!isEmailValid) {
-      return;
-    }
+    if (!isEmailValid) return;
 
     setIsSubmitting(true);
-
     try {
       const finalPassword = password.trim() || "metricmind123";
       await login(email.trim(), finalPassword, rememberMe);
       setLoginSuccess(true);
       setTimeout(() => {
         router.push(redirectUrl);
-      }, 400);
+      }, 300);
     } catch (err: any) {
       setGeneralError(err.message || "Unable to sign in with this email ID. Please try again.");
     } finally {
@@ -138,15 +115,12 @@ function LoginForm() {
     }
   };
 
-  // Real Google OAuth 2.0 Initiation
   const handleGoogleClick = () => {
     setGeneralError("");
     setIsGoogleLoading(true);
-    // Initiates real server-side OAuth flow
     window.location.href = `/api/auth/google?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
-  // Instant Demo Mode Login
   const handleDemoLogin = async (role: Role = "Executive") => {
     setGeneralError("");
     setIsDemoSubmitting(true);
@@ -155,7 +129,7 @@ function LoginForm() {
       setLoginSuccess(true);
       setTimeout(() => {
         router.push(redirectUrl);
-      }, 400);
+      }, 300);
     } catch (err: any) {
       setGeneralError("Unable to initialize demo session. Please try again.");
     } finally {
@@ -163,88 +137,65 @@ function LoginForm() {
     }
   };
 
-  // Quick Account Autofill Helper for reviewers
-  const handleAutofill = (accEmail: string, accPass: string) => {
-    setEmail(accEmail);
-    setPassword(accPass);
-    setEmailError("");
-    setPasswordError("");
-    setGeneralError("");
-  };
-
   return (
-    <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14">
-      {/* Top Mobile Brand Bar (Only on small screens) */}
-      <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-slate-800/80">
+    <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14 bg-[#020617]">
+      {/* Mobile Header */}
+      <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-[#334155]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-md">
-            <Lock className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-lg bg-[#4F46E5] flex items-center justify-center text-white font-bold text-sm">
+            M
           </div>
           <div>
-            <span className="font-bold text-sm tracking-wider uppercase text-slate-100">
-              METRICMIND
-            </span>
-            <span className="block text-[10px] text-slate-400">Agentic Semantic BI</span>
+            <span className="font-bold text-sm text-[#F8FAFC]">MetricMind</span>
+            <span className="block text-[10px] text-[#64748B]">Agentic Semantic BI</span>
           </div>
         </div>
         <button
+          type="button"
           onClick={() => handleDemoLogin("Executive")}
           disabled={isDemoSubmitting || isSubmitting}
-          className="text-xs px-2.5 py-1 rounded-lg bg-amber-500/15 text-amber-300 border border-amber-500/30 font-medium"
+          className="text-xs px-2.5 py-1 rounded-lg bg-[#F59E0B]/10 text-[#F59E0B] border border-[#F59E0B]/30 font-semibold"
         >
           Demo Mode
         </button>
       </div>
 
-      {/* Centered Glassmorphic Login Card */}
+      {/* Centered Login Card */}
       <div className="w-full max-w-md mx-auto my-auto py-4">
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="relative rounded-3xl bg-slate-900/80 border border-slate-800/90 p-7 sm:p-9 shadow-2xl backdrop-blur-2xl overflow-hidden"
-        >
-          {/* Subtle top card glow line */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
-
-          {/* Heading & Subtitle */}
-          <div className="space-y-1.5 text-left mb-6">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-100">
+        <div className="rounded-2xl bg-[#1E293B] border border-[#334155] p-7 sm:p-9 shadow-lg space-y-6">
+          {/* Brand Logo & Title */}
+          <div className="space-y-1.5 text-left">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-lg bg-[#4F46E5] flex items-center justify-center text-white font-bold text-sm">
+                M
+              </div>
+              <span className="font-bold text-sm text-[#F8FAFC]">MetricMind</span>
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-[#F8FAFC]">
               Welcome back
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400">
-              Sign in to continue to MetricMind
+            <p className="text-xs sm:text-sm text-[#94A3B8]">
+              Sign in to your governed enterprise analytics account.
             </p>
           </div>
 
           {/* General Error Banner */}
-          <AnimatePresence>
-            {generalError && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5"
-                role="alert"
-              >
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-                <span className="leading-snug">{generalError}</span>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {generalError && (
+            <div className="p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-xs flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0 text-[#EF4444] mt-0.5" />
+              <span className="leading-snug">{generalError}</span>
+            </div>
+          )}
 
-          {/* Login Form */}
+          {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* Email Field */}
             <div className="space-y-1.5">
-              <label
-                htmlFor="email-input"
-                className="block text-xs font-semibold text-slate-300"
-              >
-                Email address
+              <label htmlFor="email-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                Email
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="email-input"
                   name="email"
@@ -255,40 +206,33 @@ function LoginForm() {
                   onChange={handleEmailChange}
                   onBlur={() => validateEmail(email)}
                   placeholder="you@company.com"
-                  aria-invalid={!!emailError}
-                  aria-describedby={emailError ? "email-error" : undefined}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                     emailError
-                      ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                      : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                      ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                      : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                   }`}
                 />
               </div>
               {emailError && (
-                <p id="email-error" className="text-[11px] text-rose-400 mt-1 pl-1">
-                  {emailError}
-                </p>
+                <p className="text-[11px] text-[#EF4444] mt-1 pl-1">{emailError}</p>
               )}
             </div>
 
             {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label
-                  htmlFor="password-input"
-                  className="block text-xs font-semibold text-slate-300"
-                >
+                <label htmlFor="password-input" className="block text-xs font-semibold text-[#F8FAFC]">
                   Password
                 </label>
                 <Link
                   href="/forgot-password"
-                  className="text-xs text-sky-400 hover:text-sky-300 font-medium transition-colors"
+                  className="text-xs text-[#06B6D4] hover:text-[#38bdf8] font-medium transition-colors"
                 >
-                  Forgot password?
+                  Forgot Password?
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Lock className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="password-input"
                   name="password"
@@ -296,48 +240,25 @@ function LoginForm() {
                   autoComplete="current-password"
                   value={password}
                   onChange={handlePasswordChange}
-                  placeholder="Password (optional — leave blank to sign in)"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all"
+                  placeholder="Password"
+                  className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#020617] border border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20 text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 p-1 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-2.5 p-1 text-[#64748B] hover:text-[#F8FAFC] transition-colors cursor-pointer"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {passwordError && (
-                <p id="password-error" className="text-[11px] text-rose-400 mt-1 pl-1">
-                  {passwordError}
-                </p>
-              )}
             </div>
 
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center gap-2 pt-0.5">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-700 bg-slate-950/80 text-sky-500 focus:ring-sky-500/40 focus:ring-offset-slate-900 cursor-pointer accent-sky-500"
-              />
-              <label
-                htmlFor="remember-me"
-                className="text-xs text-slate-400 cursor-pointer select-none"
-              >
-                Remember me for 30 days
-              </label>
-            </div>
-
-            {/* Primary Sign In Button */}
+            {/* Sign In Primary Button */}
             <button
               type="submit"
               disabled={isSubmitting || isDemoSubmitting || loginSuccess}
-              className="w-full relative flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-600 to-sky-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm tracking-wide shadow-lg shadow-sky-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] active:scale-[0.98] text-[#F8FAFC] font-semibold text-xs sm:text-sm transition-all shadow-sm disabled:opacity-60 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -346,38 +267,35 @@ function LoginForm() {
                 </>
               ) : loginSuccess ? (
                 <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
                   <span>Authenticated</span>
                 </>
               ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="w-4 h-4" />
-                </>
+                <span>Sign In</span>
               )}
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="relative my-5">
+          {/* OR Divider */}
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-800" />
+              <div className="w-full border-t border-[#334155]" />
             </div>
             <div className="relative flex justify-center text-[10px] uppercase font-mono tracking-wider">
-              <span className="bg-slate-900 px-3 text-slate-500">OR</span>
+              <span className="bg-[#1E293B] px-3 text-[#64748B]">OR</span>
             </div>
           </div>
 
-          {/* Continue with Google (Official Branding) */}
+          {/* Continue with Google */}
           <button
             type="button"
             onClick={handleGoogleClick}
             disabled={isGoogleLoading || isSubmitting || isDemoSubmitting || loginSuccess}
-            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-slate-950/80 hover:bg-slate-800/90 border border-slate-800 hover:border-slate-700 text-slate-200 text-xs font-semibold transition-all shadow-sm group cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#0F172A] hover:bg-[#020617] border border-[#334155] hover:border-[#475569] text-[#F8FAFC] text-xs font-semibold transition-colors cursor-pointer disabled:opacity-60"
           >
             {isGoogleLoading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                <Loader2 className="w-4 h-4 animate-spin text-[#4F46E5]" />
                 <span>Connecting to Google...</span>
               </>
             ) : (
@@ -405,135 +323,72 @@ function LoginForm() {
             )}
           </button>
 
-          {/* Action Links: Forgot Password & Create Account */}
-          <div className="flex items-center justify-between mt-4 pt-3.5 border-t border-slate-800/80 text-xs text-slate-400">
+          {/* Navigation Links: Forgot Password & Create Account */}
+          <div className="flex items-center justify-between pt-2 border-t border-[#334155] text-xs">
             <Link
               href="/forgot-password"
-              className="text-slate-400 hover:text-sky-300 font-medium transition-colors"
+              className="text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
             >
-              Forgot Password?
+              Forgot Password
             </Link>
             <Link
               href="/signup"
-              className="text-sky-400 hover:text-sky-300 font-semibold hover:underline underline-offset-2 transition-all inline-flex items-center gap-1 group"
+              className="text-[#4F46E5] hover:text-[#818CF8] font-semibold transition-colors flex items-center gap-1"
             >
               <span>Create Account</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
 
-          {/* Continue in Demo Mode Section */}
-          <div className="mt-4 pt-4 border-t border-slate-800/80 space-y-2">
+          {/* Demo Mode Button for Instant Evaluation */}
+          <div className="pt-3 border-t border-[#334155]">
             <button
               type="button"
               onClick={() => handleDemoLogin("Executive")}
               disabled={isDemoSubmitting || isSubmitting || isGoogleLoading || loginSuccess}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 text-amber-200 transition-all group text-left cursor-pointer"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-[#0F172A] hover:bg-[#020617] border border-[#F59E0B]/30 text-left transition-colors cursor-pointer"
             >
-              <div className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-amber-200">
-                      Continue in Demo Mode
-                    </span>
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-semibold">
-                      DEMO MODE
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-amber-300/80 mt-0.5">
-                    Explore MetricMind without connecting a production account.
+                  <span className="text-xs font-semibold text-[#F8FAFC]">
+                    Explore Demo Session
+                  </span>
+                  <p className="text-[10px] text-[#94A3B8]">
+                    Instant access as Governed Executive without credentials.
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-amber-400/70 group-hover:translate-x-0.5 transition-transform shrink-0" />
-            </button>
-
-            {/* Quick Demo Role Selector Pills */}
-            <div className="flex items-center justify-between gap-1 pt-1 text-[10px] text-slate-400">
-              <span className="text-slate-500 flex items-center gap-1 shrink-0">
-                <Users className="w-3 h-3" />
-                Roles:
-              </span>
-              <div className="flex items-center gap-1 overflow-x-auto">
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("Executive")}
-                  className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-sky-500/20 hover:text-sky-300 text-slate-300 transition-colors"
-                  title="Rajesh Kapoor (Executive)"
-                >
-                  Executive
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("Finance Analyst")}
-                  className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-indigo-500/20 hover:text-indigo-300 text-slate-300 transition-colors"
-                  title="Priya Sharma (Finance Analyst)"
-                >
-                  Finance
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("Sales Analyst")}
-                  className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-purple-500/20 hover:text-purple-300 text-slate-300 transition-colors"
-                  title="Devon Clark (Sales Analyst)"
-                >
-                  Sales
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("Admin")}
-                  className="px-2 py-0.5 rounded bg-slate-800/80 hover:bg-emerald-500/20 hover:text-emerald-300 text-slate-300 transition-colors"
-                  title="Vikram Malhotra (Admin)"
-                >
-                  Admin
-                </button>
-              </div>
-            </div>
-          </div>
-
-
-          {/* Security Message */}
-          <div className="mt-3.5 pt-3 border-t border-slate-800/50 flex items-center justify-center gap-2 text-[11px] text-slate-400 text-center">
-            <Lock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span>Your business data stays governed and protected.</span>
-          </div>
-
-          {/* Need Access / Sign Up link */}
-          <div className="mt-3 text-center text-xs text-slate-400">
-            <span>Need access? </span>
-            <button
-              type="button"
-              onClick={() => setIsRequestAccessModalOpen(true)}
-              className="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
-            >
-              Contact your administrator
+              <ChevronRight className="w-4 h-4 text-[#94A3B8]" />
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Footer */}
-      <footer className="w-full pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <footer className="w-full pt-4 border-t border-[#334155] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
         <div>&copy; 2026 MetricMind Enterprise. All rights reserved.</div>
         <div className="flex items-center gap-4">
           <button
+            type="button"
             onClick={() => setModalType("privacy")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Privacy
           </button>
           <span>•</span>
           <button
+            type="button"
             onClick={() => setModalType("terms")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Terms
           </button>
           <span>•</span>
           <button
+            type="button"
             onClick={() => setModalType("help")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Help
           </button>
@@ -560,18 +415,18 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:grid lg:grid-cols-12 selection:bg-sky-500/30 selection:text-sky-200">
-      {/* LEFT SIDE: Brand / Product Showcase (5 cols on large screens) */}
-      <div className="lg:col-span-6 xl:col-span-5 hidden lg:block">
+    <div className="min-h-screen bg-[#020617] text-[#F8FAFC] flex flex-col lg:grid lg:grid-cols-12">
+      {/* Brand Panel */}
+      <div className="lg:col-span-6 xl:col-span-5 hidden lg:block border-r border-[#334155]">
         <BrandPanel />
       </div>
 
-      {/* RIGHT SIDE: Centered Login Card (7 cols on large screens) */}
-      <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center min-h-screen bg-slate-950/90 relative">
+      {/* Right Login Area */}
+      <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center min-h-screen bg-[#020617]">
         <Suspense
           fallback={
-            <div className="flex items-center justify-center p-12 text-slate-400">
-              <Loader2 className="w-6 h-6 animate-spin text-sky-400" />
+            <div className="flex items-center justify-center p-12 text-[#94A3B8]">
+              <Loader2 className="w-6 h-6 animate-spin text-[#4F46E5]" />
             </div>
           }
         >

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ArrowRight, Info, AlertTriangle, ShieldCheck, TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { LayoutDashboard, FileText, Database, ShieldCheck } from "lucide-react";
 import { SimulationResult } from "@/types/impact";
 
 interface CurrentVsProposedCardProps {
@@ -10,137 +10,152 @@ interface CurrentVsProposedCardProps {
 
 export const CurrentVsProposedCard: React.FC<CurrentVsProposedCardProps> = ({ simulation }) => {
   const diff = simulation.difference_pp;
-  const isZero = diff === 0;
 
   return (
-    <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-6">
-      {/* Header with Neutrality Disclaimer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+    <div className="bg-[#1E293B] border border-[#334155] rounded-2xl p-6 shadow-sm space-y-6">
+      {/* Header with Mandatory Enterprise Badges */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#334155]">
         <div>
-          <span className="text-[10px] font-bold text-sky-400 uppercase tracking-wider">
-            Section 6 & 14 • Metric Value Simulation
+          <span className="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider">
+            Financial Modeling Engine
           </span>
-          <h3 className="text-lg font-black text-slate-100 mt-0.5">
-            Before vs After Simulation Comparison
+          <h3 className="text-lg font-bold text-[#F8FAFC] mt-0.5">
+            Side-by-Side Metric Definition Comparison
           </h3>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] font-bold px-3 py-1 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5" />
-            <span>SIMULATION — NOT ACTUAL DATA</span>
+        {/* Badges: SANDBOX, READ ONLY, PRODUCTION DATA UNCHANGED */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30">
+            SANDBOX
+          </span>
+          <span className="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-[#0F172A] text-[#94A3B8] border border-[#334155]">
+            READ ONLY
+          </span>
+          <span className="px-2.5 py-1 rounded-md text-[11px] font-mono font-bold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+            PRODUCTION DATA UNCHANGED
           </span>
         </div>
       </div>
 
-      {/* Tri-Column Comparison Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* CURRENT */}
-        <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-3 relative overflow-hidden">
+      {/* Side-by-Side Comparison: CURRENT DEFINITION vs PROPOSED DEFINITION */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* CURRENT DEFINITION */}
+        <div className="p-5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Current Baseline
+            <span className="text-xs font-bold text-[#94A3B8] uppercase tracking-wider">
+              CURRENT DEFINITION
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#1E293B] text-[#94A3B8] border border-[#334155]">
               v{simulation.current_version} Governed
             </span>
           </div>
 
-          <div className="space-y-1">
-            <div className="text-3xl font-black text-slate-100 tracking-tight font-mono">
+          <div className="p-3 rounded-lg bg-[#020617] border border-[#334155] font-mono text-xs text-[#F8FAFC]">
+            {simulation.current_definition?.formula || "((Revenue - Cost) / Revenue) × 100"}
+          </div>
+
+          <div className="flex items-baseline justify-between pt-1">
+            <span className="text-xs text-[#94A3B8]">Current Value:</span>
+            <span className="text-2xl font-bold font-mono text-[#F8FAFC]">
               {simulation.current_value.toFixed(2)}{simulation.unit}
-            </div>
-            <div className="text-xs text-slate-400 font-medium">
-              {simulation.metric_name}
-            </div>
+            </span>
           </div>
 
-          <div className="pt-3 border-t border-slate-800/80 text-[11px] text-slate-500 flex items-center justify-between">
-            <span>Period: <strong className="text-slate-400">{simulation.scope.period}</strong></span>
-            <span>Region: <strong className="text-slate-400">{simulation.scope.region}</strong></span>
+          <div className="text-[11px] text-[#64748B] flex items-center justify-between pt-2 border-t border-[#334155]">
+            <span>Scope: {simulation.scope.region} ({simulation.scope.period})</span>
+            <span className="text-[#10B981] font-semibold">Active Production</span>
           </div>
         </div>
 
-        {/* PROPOSED (SIMULATION) */}
-        <div className="p-5 rounded-2xl bg-gradient-to-b from-sky-950/30 to-indigo-950/20 border border-sky-500/40 flex flex-col justify-between space-y-3 relative overflow-hidden ring-1 ring-sky-500/20 shadow-lg shadow-sky-500/10">
+        {/* PROPOSED DEFINITION */}
+        <div className="p-5 rounded-xl bg-[#0F172A] border border-[#F59E0B]/40 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-              <span>Proposed Value</span>
+            <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-wider">
+              PROPOSED DEFINITION
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 font-bold uppercase tracking-wider">
-              Simulation Sandbox
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 font-semibold">
+              SIMULATION (AMBER)
             </span>
           </div>
 
-          <div className="space-y-1">
-            <div className="text-3xl font-black text-sky-300 tracking-tight font-mono">
+          <div className="p-3 rounded-lg bg-[#020617] border border-[#F59E0B]/30 font-mono text-xs text-[#F59E0B]">
+            {simulation.proposed_definition?.formula || "((Revenue - Cost - Logistics Cost) / Revenue) × 100"}
+          </div>
+
+          <div className="flex items-baseline justify-between pt-1">
+            <span className="text-xs text-[#94A3B8]">Simulated Value:</span>
+            <span className="text-2xl font-bold font-mono text-[#F59E0B]">
               {simulation.simulated_value.toFixed(2)}{simulation.unit}
-            </div>
-            <div className="text-xs text-slate-400 font-medium">
-              {simulation.metric_name} (Simulated)
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400 flex items-center justify-between">
-            <span>Target Version: <strong className="text-sky-300">Draft v2.2</strong></span>
-            <span className="text-amber-400 font-bold font-mono text-[10px]">READ ONLY</span>
-          </div>
-        </div>
-
-        {/* IMPACT (DELTA) - ANALTICALLY NEUTRAL */}
-        <div className="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between space-y-3 relative overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-              Net Impact Difference
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-bold">
-              Neutral Delta
             </span>
           </div>
 
-          <div className="space-y-1">
-            <div className="text-3xl font-black text-slate-100 tracking-tight font-mono flex items-center gap-2">
-              <span>{diff > 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2)} pp</span>
-              <span className="text-sm font-sans text-slate-400 font-normal">
-                ({(((simulation.simulated_value - simulation.current_value) / simulation.current_value) * 100).toFixed(1)}%)
-              </span>
-            </div>
-            <div className="text-xs text-slate-400">
-              Change in percentage points
-            </div>
-          </div>
-
-          <div className="pt-3 border-t border-slate-800/80 text-[11px] text-slate-400">
-            <span>Downstream Footprint: <strong className="text-slate-200">{simulation.impact_assessment.total_affected_assets} Assets Affected</strong></span>
+          <div className="text-[11px] text-[#64748B] flex items-center justify-between pt-2 border-t border-[#334155]">
+            <span>Net Delta: <strong className={diff >= 0 ? "text-[#10B981]" : "text-[#EF4444]"}>{diff > 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2)} pp</strong></span>
+            <span className="text-[#F59E0B] font-semibold">Pending Governance</span>
           </div>
         </div>
       </div>
 
-      {/* Semantic Component Breakdown (Section 14) */}
-      <div className="p-4 rounded-xl bg-black/40 border border-slate-800/80 text-xs space-y-2">
-        <div className="flex items-center justify-between text-slate-400 font-bold text-[11px] uppercase tracking-wider">
-          <span>Component Math Calculation Breakdown</span>
-          <span className="text-slate-500 font-normal">Deterministic Enterprise Sample (Q3 2026 Europe)</span>
+      {/* Downstream Impact Metrics Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 pt-2">
+        {/* Definition Change */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B]">Definition Change</span>
+          <div className="text-xs font-semibold text-[#F8FAFC]">
+            {simulation.change_type === "formula_change" ? "Formula Modified" : "Component Logic"}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-          <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 font-bold block">RECOGNIZED REVENUE</span>
-            <span className="text-sm font-mono font-bold text-slate-200">₹48.60 Cr</span>
+        {/* Expected Impact */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B]">Expected Impact</span>
+          <div className="text-xs font-bold font-mono text-[#F59E0B]">
+            {diff > 0 ? `+${diff.toFixed(2)}` : diff.toFixed(2)} pp
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 font-bold block">BASE COGS (COST)</span>
-            <span className="text-sm font-mono font-bold text-slate-200">₹35.38 Cr</span>
+        </div>
+
+        {/* Affected Dashboards */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B] flex items-center gap-1">
+            <LayoutDashboard className="w-3 h-3 text-[#4F46E5]" />
+            Dashboards
+          </span>
+          <div className="text-xs font-bold font-mono text-[#F8FAFC]">
+            {simulation.impact_assessment.dashboards_count} Dashboards
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 font-bold block">LOGISTICS FREIGHT</span>
-            <span className="text-sm font-mono font-bold text-sky-400">₹2.10 Cr</span>
+        </div>
+
+        {/* Affected Reports */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B] flex items-center gap-1">
+            <FileText className="w-3 h-3 text-[#06B6D4]" />
+            Reports
+          </span>
+          <div className="text-xs font-bold font-mono text-[#F8FAFC]">
+            {simulation.impact_assessment.reports_count} Reports
           </div>
-          <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 font-bold block">SIMULATION FORMULA</span>
-            <span className="text-[11px] font-mono text-emerald-400 truncate block">
-              (48.60 - 35.38 - 2.10) / 48.60 × 100
-            </span>
+        </div>
+
+        {/* Affected Metrics */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B] flex items-center gap-1">
+            <Database className="w-3 h-3 text-[#8B5CF6]" />
+            Metrics
+          </span>
+          <div className="text-xs font-bold font-mono text-[#F8FAFC]">
+            {simulation.dependent_metrics?.length || 4} Dependent
+          </div>
+        </div>
+
+        {/* Governance Status */}
+        <div className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1">
+          <span className="text-[10px] uppercase font-bold text-[#64748B] flex items-center gap-1">
+            <ShieldCheck className="w-3 h-3 text-[#F59E0B]" />
+            Governance
+          </span>
+          <div className="text-xs font-semibold text-[#F59E0B]">
+            Draft Sandbox
           </div>
         </div>
       </div>

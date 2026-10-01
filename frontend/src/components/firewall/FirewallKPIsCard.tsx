@@ -8,8 +8,6 @@ import {
   Terminal,
   Database,
   Lock,
-  ArrowUpRight,
-  TrendingDown
 } from "lucide-react";
 import { FirewallKPIs } from "@/types/firewall";
 
@@ -20,81 +18,82 @@ interface FirewallKPIsCardProps {
 export const FirewallKPIsCard: React.FC<FirewallKPIsCardProps> = ({ kpis }) => {
   const cards = [
     {
-      label: "Requests Today",
+      label: "Requests",
       value: kpis.requests_today.toLocaleString(),
       subtext: "100% pre-filtered",
-      icon: <Activity className="w-4 h-4 text-sky-400" />,
-      color: "border-sky-500/20 bg-sky-500/5 text-sky-400",
-      accent: "text-slate-100"
+      icon: Activity,
+      color: "text-[#06B6D4]",
+      accent: "text-[#F8FAFC]",
     },
     {
       label: "Approved",
       value: kpis.approved.toLocaleString(),
       subtext: `${((kpis.approved / kpis.requests_today) * 100).toFixed(1)}% compliance rate`,
-      icon: <ShieldCheck className="w-4 h-4 text-emerald-400" />,
-      color: "border-emerald-500/20 bg-emerald-500/5 text-emerald-400",
-      accent: "text-emerald-400"
+      icon: ShieldCheck,
+      color: "text-[#10B981]",
+      accent: "text-[#10B981]",
     },
     {
       label: "Blocked",
       value: kpis.blocked.toLocaleString(),
       subtext: "Zero leakage to Cube",
-      icon: <ShieldAlert className="w-4 h-4 text-rose-400" />,
-      color: "border-rose-500/20 bg-rose-500/5 text-rose-400",
-      accent: "text-rose-400"
+      icon: ShieldAlert,
+      color: "text-[#EF4444]",
+      accent: "text-[#EF4444]",
     },
     {
-      label: "SQL Attempts Blocked",
+      label: "SQL Attempts",
       value: kpis.sql_attempts_blocked.toLocaleString(),
       subtext: "Raw SQL blocked",
-      icon: <Terminal className="w-4 h-4 text-amber-400" />,
-      color: "border-amber-500/20 bg-amber-500/5 text-amber-400",
-      accent: "text-amber-400"
+      icon: Terminal,
+      color: "text-[#F59E0B]",
+      accent: "text-[#F59E0B]",
     },
     {
-      label: "Unknown Metrics Blocked",
+      label: "Unknown Metrics",
       value: kpis.unknown_metrics_blocked.toLocaleString(),
       subtext: "Hallucinated formulas stopped",
-      icon: <Database className="w-4 h-4 text-purple-400" />,
-      color: "border-purple-500/20 bg-purple-500/5 text-purple-400",
-      accent: "text-purple-400"
+      icon: Database,
+      color: "text-[#F59E0B]",
+      accent: "text-[#F59E0B]",
     },
     {
       label: "Permission Violations",
       value: kpis.permission_violations.toLocaleString(),
       subtext: "RBAC boundaries enforced",
-      icon: <Lock className="w-4 h-4 text-red-400" />,
-      color: "border-red-500/20 bg-red-500/5 text-red-400",
-      accent: "text-red-400"
-    }
+      icon: Lock,
+      color: "text-[#EF4444]",
+      accent: "text-[#EF4444]",
+    },
   ];
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-      {cards.map((c, i) => (
-        <div
-          key={i}
-          className="p-4 rounded-3xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-2 hover:border-slate-700 transition-all backdrop-blur-xl group"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 tracking-wide uppercase line-clamp-1">
-              {c.label}
-            </span>
-            <div className={`p-1.5 rounded-xl border ${c.color} shrink-0`}>
-              {c.icon}
+      {cards.map((c, i) => {
+        const Icon = c.icon;
+        return (
+          <div
+            key={i}
+            className="p-4 rounded-2xl bg-[#1E293B] border border-[#334155] hover:border-[#475569] transition-colors flex flex-col justify-between space-y-2 shadow-sm"
+          >
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[11px] font-semibold text-[#94A3B8] uppercase tracking-wider truncate">
+                {c.label}
+              </span>
+              <Icon className={`w-4 h-4 shrink-0 ${c.color}`} />
             </div>
-          </div>
 
-          <div className="space-y-0.5">
-            <div className={`text-2xl font-black tracking-tight ${c.accent}`}>
-              {c.value}
-            </div>
-            <div className="text-[10px] text-slate-500 font-medium">
-              {c.subtext}
+            <div className="space-y-0.5">
+              <div className={`text-2xl font-bold tracking-tight ${c.accent}`}>
+                {c.value}
+              </div>
+              <div className="text-[10px] text-[#64748B] truncate">
+                {c.subtext}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

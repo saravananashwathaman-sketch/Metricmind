@@ -9,8 +9,7 @@ import {
   Shield,
   SlidersHorizontal,
   CheckCircle2,
-  ExternalLink,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { Role } from "@/types";
 
@@ -35,7 +34,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   onChangeRole,
   onOpenCommandPalette,
   isDemoMode,
-  onToggleDemoMode
+  onToggleDemoMode,
 }) => {
   const [showRoleMenu, setShowRoleMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -45,35 +44,36 @@ export const TopNav: React.FC<TopNavProps> = ({
   const roles: Role[] = ["Executive", "Finance Analyst", "Sales Analyst", "Admin"];
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-slate-950/80 border-b border-slate-800/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-[#020617]/95 border-b border-[#334155] backdrop-blur-md">
       {/* Search / Command palette trigger */}
       <div className="flex items-center gap-4 flex-1 max-w-xl">
         <button
+          type="button"
           onClick={onOpenCommandPalette}
-          className="flex items-center justify-between w-full max-w-md px-3.5 py-2 text-xs text-slate-400 bg-slate-900/80 hover:bg-slate-900 border border-slate-800/90 rounded-xl transition-all shadow-inner group"
+          className="flex items-center justify-between w-full max-w-md px-3.5 py-2 text-xs text-[#94A3B8] bg-[#0F172A] hover:bg-[#1E293B] border border-[#334155] rounded-xl transition-colors cursor-pointer group"
         >
           <div className="flex items-center gap-2.5">
-            <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-400 transition-colors" />
+            <Search className="w-4 h-4 text-[#64748B] group-hover:text-[#F8FAFC] transition-colors" />
             <span className="truncate">Ask a governed question or search metrics...</span>
           </div>
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-800 border border-slate-700/60 rounded">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono text-[#94A3B8] bg-[#1E293B] border border-[#334155] rounded">
             ⌘K
           </kbd>
         </button>
       </div>
 
       {/* Global Dimension Filters & Governance Context */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5">
         {/* Quarter Selector */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-xl text-xs text-slate-300">
-          <Calendar className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F172A] border border-[#334155] rounded-xl text-xs text-[#94A3B8]">
+          <Calendar className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
           <select
             value={quarter}
             onChange={(e) => onChangeQuarter(e.target.value)}
-            className="bg-transparent border-none text-xs text-slate-200 focus:outline-none cursor-pointer pr-1"
+            className="bg-transparent border-none text-xs text-[#F8FAFC] focus:outline-none cursor-pointer pr-1"
           >
             {quarters.map((q) => (
-              <option key={q} value={q} className="bg-slate-900 text-slate-200">
+              <option key={q} value={q} className="bg-[#0F172A] text-[#F8FAFC]">
                 {q}
               </option>
             ))}
@@ -81,15 +81,15 @@ export const TopNav: React.FC<TopNavProps> = ({
         </div>
 
         {/* Region Selector */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900/80 border border-slate-800/80 rounded-xl text-xs text-slate-300">
-          <Globe2 className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0F172A] border border-[#334155] rounded-xl text-xs text-[#94A3B8]">
+          <Globe2 className="w-3.5 h-3.5 text-[#4F46E5] shrink-0" />
           <select
             value={region}
             onChange={(e) => onChangeRegion(e.target.value)}
-            className="bg-transparent border-none text-xs text-slate-200 focus:outline-none cursor-pointer pr-1"
+            className="bg-transparent border-none text-xs text-[#F8FAFC] focus:outline-none cursor-pointer pr-1"
           >
             {regions.map((r) => (
-              <option key={r} value={r} className="bg-slate-900 text-slate-200">
+              <option key={r} value={r} className="bg-[#0F172A] text-[#F8FAFC]">
                 {r === "Global" ? "Global Scope" : r}
               </option>
             ))}
@@ -99,34 +99,36 @@ export const TopNav: React.FC<TopNavProps> = ({
         {/* Role Switcher Menu */}
         <div className="relative">
           <button
+            type="button"
             onClick={() => setShowRoleMenu(!showRoleMenu)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800/80 text-xs font-medium text-slate-300 transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] border border-[#334155] text-xs font-medium text-[#F8FAFC] transition-colors cursor-pointer"
           >
-            <Shield className="w-3.5 h-3.5 text-emerald-400" />
+            <Shield className="w-3.5 h-3.5 text-[#10B981]" />
             <span className="hidden sm:inline">{userRole}</span>
-            <ChevronDown className="w-3 h-3 text-slate-400" />
+            <ChevronDown className="w-3 h-3 text-[#64748B]" />
           </button>
 
           {showRoleMenu && (
-            <div className="absolute right-0 mt-2 w-48 py-1 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-1.5 text-[10px] font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-800">
+            <div className="absolute right-0 mt-2 w-48 py-1 bg-[#1E293B] border border-[#334155] rounded-xl shadow-xl z-50">
+              <div className="px-3 py-1.5 text-[10px] font-semibold text-[#64748B] uppercase tracking-wider border-b border-[#334155]">
                 Switch Role Context
               </div>
               {roles.map((r) => (
                 <button
                   key={r}
+                  type="button"
                   onClick={() => {
                     onChangeRole(r);
                     setShowRoleMenu(false);
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors ${
+                  className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors cursor-pointer ${
                     userRole === r
-                      ? "bg-sky-500/15 text-sky-300 font-semibold"
-                      : "text-slate-300 hover:bg-slate-800/60"
+                      ? "bg-[#4F46E5]/15 text-[#818CF8] font-semibold"
+                      : "text-[#94A3B8] hover:bg-[#334155]/50 hover:text-[#F8FAFC]"
                   }`}
                 >
                   <span>{r}</span>
-                  {userRole === r && <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />}
+                  {userRole === r && <CheckCircle2 className="w-3.5 h-3.5 text-[#4F46E5]" />}
                 </button>
               ))}
             </div>
@@ -136,46 +138,46 @@ export const TopNav: React.FC<TopNavProps> = ({
         {/* Notifications */}
         <div className="relative">
           <button
+            type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative p-2 rounded-xl bg-slate-900/80 hover:bg-slate-900 border border-slate-800/80 text-slate-400 hover:text-slate-200 transition-colors"
+            className="relative p-2 rounded-xl bg-[#0F172A] hover:bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
             title="Governance Alerts"
           >
             <Bell className="w-4 h-4" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-sky-400 rounded-full animate-ping" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-sky-400 rounded-full" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#06B6D4] rounded-full" />
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 p-3 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 space-y-2.5 animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span className="text-xs font-bold text-slate-200">Governance & System Notifications</span>
-                <span className="text-[10px] text-sky-400 font-medium">3 New</span>
+            <div className="absolute right-0 mt-2 w-80 p-3 bg-[#1E293B] border border-[#334155] rounded-2xl shadow-2xl z-50 space-y-2.5">
+              <div className="flex items-center justify-between border-b border-[#334155] pb-2">
+                <span className="text-xs font-bold text-[#F8FAFC]">Governance Alerts</span>
+                <span className="text-[10px] text-[#06B6D4] font-medium">3 New</span>
               </div>
               <div className="space-y-2 text-xs">
-                <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/70 space-y-0.5">
-                  <div className="flex items-center justify-between font-medium text-emerald-400 text-[11px]">
+                <div className="p-2 rounded-lg bg-[#0F172A] border border-[#334155] space-y-0.5">
+                  <div className="flex items-center justify-between font-medium text-[#10B981] text-[11px]">
                     <span>Metric Verified</span>
-                    <span className="text-slate-500 text-[9px]">10m ago</span>
+                    <span className="text-[#64748B] text-[9px]">10m ago</span>
                   </div>
-                  <p className="text-slate-300 text-[11px]">
+                  <p className="text-[#94A3B8] text-[11px]">
                     Gross Margin v3.1.2 was signed off by Priya Sharma.
                   </p>
                 </div>
-                <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/70 space-y-0.5">
-                  <div className="flex items-center justify-between font-medium text-amber-400 text-[11px]">
+                <div className="p-2 rounded-lg bg-[#0F172A] border border-[#334155] space-y-0.5">
+                  <div className="flex items-center justify-between font-medium text-[#F59E0B] text-[11px]">
                     <span>Rogue SQL Blocked</span>
-                    <span className="text-slate-500 text-[9px]">1h ago</span>
+                    <span className="text-[#64748B] text-[9px]">1h ago</span>
                   </div>
-                  <p className="text-slate-300 text-[11px]">
+                  <p className="text-[#94A3B8] text-[11px]">
                     Un-governed raw table query was intercepted and rerouted to semantic catalog.
                   </p>
                 </div>
-                <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/70 space-y-0.5">
-                  <div className="flex items-center justify-between font-medium text-sky-400 text-[11px]">
+                <div className="p-2 rounded-lg bg-[#0F172A] border border-[#334155] space-y-0.5">
+                  <div className="flex items-center justify-between font-medium text-[#06B6D4] text-[11px]">
                     <span>dbt Mart Synchronized</span>
-                    <span className="text-slate-500 text-[9px]">2h ago</span>
+                    <span className="text-[#64748B] text-[9px]">2h ago</span>
                   </div>
-                  <p className="text-slate-300 text-[11px]">
+                  <p className="text-[#94A3B8] text-[11px]">
                     marts.finance.fct_sales successfully refreshed with 0 test failures.
                   </p>
                 </div>
@@ -186,13 +188,14 @@ export const TopNav: React.FC<TopNavProps> = ({
 
         {/* Demo / Prod Mode Button */}
         <button
+          type="button"
           onClick={onToggleDemoMode}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-all ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition-colors cursor-pointer ${
             isDemoMode
-              ? "bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border-amber-500/30"
-              : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border-emerald-500/30"
+              ? "bg-[#F59E0B]/10 hover:bg-[#F59E0B]/20 text-[#F59E0B] border-[#F59E0B]/30"
+              : "bg-[#10B981]/10 hover:bg-[#10B981]/20 text-[#10B981] border-[#10B981]/30"
           }`}
-          title="Toggle between Interactive Demo Mode and Connected Production Mode"
+          title="Toggle runtime mode"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
           <span className="hidden md:inline">{isDemoMode ? "Demo Mode" : "Production"}</span>

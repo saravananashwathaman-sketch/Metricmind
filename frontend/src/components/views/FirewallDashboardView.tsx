@@ -3,31 +3,23 @@
 import React, { useState } from "react";
 import {
   ShieldAlert,
-  ShieldCheck,
   Terminal,
-  Activity,
   Award,
   Layers,
   Database,
   History,
   Lock,
-  Sparkles,
-  CheckCircle2,
-  XCircle,
-  FileCode,
-  ListFilter
 } from "lucide-react";
 import { FirewallStatusBanner } from "@/components/firewall/FirewallStatusBanner";
 import { FirewallKPIsCard } from "@/components/firewall/FirewallKPIsCard";
 import { FirewallRequestInspector } from "@/components/firewall/FirewallRequestInspector";
 import { FirewallTestLab } from "@/components/firewall/FirewallTestLab";
 import { FirewallAuditTable } from "@/components/firewall/FirewallAuditTable";
+import { StatusBadge } from "@/components/design-system/StatusBadge";
 import {
   INITIAL_FIREWALL_KPIS,
-  APPROVED_METRICS_LIST,
-  APPROVED_DIMENSIONS_LIST,
   RESTRICTED_ENTITIES,
-  PROHIBITED_DATA_SOURCES
+  PROHIBITED_DATA_SOURCES,
 } from "@/lib/firewallEngine";
 import { APPROVED_MEASURES, APPROVED_DIMENSIONS } from "@/lib/semanticSchema";
 
@@ -35,86 +27,86 @@ export const FirewallDashboardView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"inspector" | "test-lab" | "audit" | "catalog">("inspector");
 
   return (
-    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
-      {/* Page Header (Requirement 21 & 35) */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-5">
-        <div>
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-gradient-to-tr from-rose-500/20 via-slate-800 to-indigo-500/20 border border-rose-500/30 text-rose-400 shadow-xl shadow-rose-500/10">
-              <ShieldAlert className="w-6 h-6" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black text-slate-100 tracking-tight flex items-center gap-2.5">
-                AI Hallucination Firewall
-              </h1>
-              <p className="text-xs text-slate-400 mt-1">
-                &quot;Every AI-generated analytical request is validated before reaching the semantic layer.&quot;
-              </p>
-            </div>
+    <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#334155]">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-md bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30">
+              Security Console
+            </span>
           </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F8FAFC] tracking-tight flex items-center gap-2.5">
+            <ShieldAlert className="w-6 h-6 text-[#EF4444]" />
+            AI Hallucination Firewall
+          </h1>
+          <p className="text-sm text-[#94A3B8]">
+            Every AI-generated analytical request is validated before reaching the semantic layer. Zero rogue SQL.
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 flex items-center gap-2 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-mono text-emerald-300 font-bold">ZERO-TRUST ENFORCED</span>
-          </div>
+          <StatusBadge status="verified" label="Status: PROTECTED" size="md" />
         </div>
       </div>
 
-      {/* Prominent Firewall Status Card (Requirement 22) */}
+      {/* Prominent Firewall Status Banner */}
       <FirewallStatusBanner />
 
-      {/* Top KPI Cards (Requirement 21) */}
+      {/* Summary Metrics: Requests, Approved, Blocked, SQL Attempts, Unknown Metrics, Permission Violations */}
       <FirewallKPIsCard kpis={INITIAL_FIREWALL_KPIS} />
 
       {/* Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-1 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-[#334155] pb-2 overflow-x-auto">
         <button
+          type="button"
           onClick={() => setActiveTab("inspector")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === "inspector"
-              ? "bg-sky-500/20 text-sky-200 border border-sky-500/30 shadow-lg shadow-sky-500/10"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+              ? "bg-[#4F46E5] text-[#F8FAFC] shadow-sm"
+              : "bg-[#1E293B] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#334155]"
           }`}
         >
-          <Terminal className="w-4 h-4 text-sky-400" />
+          <Terminal className="w-4 h-4" />
           <span>Real-Time Request Inspector</span>
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("test-lab")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === "test-lab"
-              ? "bg-amber-500/20 text-amber-200 border border-amber-500/30 shadow-lg shadow-amber-500/10"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+              ? "bg-[#4F46E5] text-[#F8FAFC] shadow-sm"
+              : "bg-[#1E293B] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#334155]"
           }`}
         >
-          <Award className="w-4 h-4 text-amber-400" />
+          <Award className="w-4 h-4" />
           <span>Automated Test Lab</span>
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("audit")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === "audit"
-              ? "bg-indigo-500/20 text-indigo-200 border border-indigo-500/30 shadow-lg shadow-indigo-500/10"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+              ? "bg-[#4F46E5] text-[#F8FAFC] shadow-sm"
+              : "bg-[#1E293B] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#334155]"
           }`}
         >
-          <History className="w-4 h-4 text-indigo-400" />
+          <History className="w-4 h-4" />
           <span>Firewall Audit Log</span>
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("catalog")}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === "catalog"
-              ? "bg-emerald-500/20 text-emerald-200 border border-emerald-500/30 shadow-lg shadow-emerald-500/10"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
+              ? "bg-[#4F46E5] text-[#F8FAFC] shadow-sm"
+              : "bg-[#1E293B] text-[#94A3B8] hover:text-[#F8FAFC] border border-[#334155]"
           }`}
         >
-          <Layers className="w-4 h-4 text-emerald-400" />
+          <Layers className="w-4 h-4" />
           <span>Allowlist & Policy Catalog</span>
         </button>
       </div>
@@ -129,30 +121,28 @@ export const FirewallDashboardView: React.FC = () => {
       {activeTab === "catalog" && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Approved Measures */}
-          <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <Database className="w-4 h-4 text-sky-400" />
+          <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-3">
+              <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+                <Database className="w-4 h-4 text-[#4F46E5]" />
                 Approved Measures Allowlist ({APPROVED_MEASURES.length})
               </h3>
-              <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">
-                Cube Sales.yml
-              </span>
+              <StatusBadge status="verified" label="Cube Sales.yml" />
             </div>
-            <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
               {APPROVED_MEASURES.map((m) => (
                 <div
                   key={m.name}
-                  className="p-3 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1 text-xs"
+                  className="p-3 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1 text-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">{m.display_name}</span>
-                    <span className="font-mono text-[10px] text-sky-400">{m.technical_name}</span>
+                    <span className="font-semibold text-[#F8FAFC]">{m.display_name}</span>
+                    <span className="font-mono text-[11px] text-[#06B6D4]">{m.technical_name}</span>
                   </div>
-                  <div className="font-mono text-[11px] text-slate-400">Formula: {m.formula}</div>
-                  <div className="text-[10px] text-slate-500 flex items-center justify-between pt-1">
+                  <div className="font-mono text-[11px] text-[#94A3B8]">Formula: {m.formula}</div>
+                  <div className="text-[10px] text-[#64748B] flex items-center justify-between pt-1">
                     <span>Version: {m.version}</span>
-                    <span className="text-emerald-400 font-bold">STATUS: {m.status}</span>
+                    <span className="text-[#10B981] font-semibold">STATUS: {m.status}</span>
                   </div>
                 </div>
               ))}
@@ -160,28 +150,26 @@ export const FirewallDashboardView: React.FC = () => {
           </div>
 
           {/* Approved Dimensions */}
-          <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-400" />
+          <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-3">
+              <h3 className="text-sm font-bold text-[#F8FAFC] flex items-center gap-2">
+                <Layers className="w-4 h-4 text-[#06B6D4]" />
                 Approved Dimensions Allowlist ({APPROVED_DIMENSIONS.length})
               </h3>
-              <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 font-bold">
-                Categorical / Geo
-              </span>
+              <StatusBadge status="info" label="Geo / Categorical" />
             </div>
-            <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
               {APPROVED_DIMENSIONS.map((d) => (
                 <div
                   key={d.name}
-                  className="p-3 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-1 text-xs"
+                  className="p-3 rounded-xl bg-[#0F172A] border border-[#334155] space-y-1 text-xs"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-200">{d.display_name}</span>
-                    <span className="font-mono text-[10px] text-indigo-400">{d.cube}.{d.name}</span>
+                    <span className="font-semibold text-[#F8FAFC]">{d.display_name}</span>
+                    <span className="font-mono text-[11px] text-[#06B6D4]">{d.cube}.{d.name}</span>
                   </div>
-                  <p className="text-[11px] text-slate-400">{d.description}</p>
-                  <div className="text-[10px] text-slate-500 font-mono">
+                  <p className="text-[11px] text-[#94A3B8]">{d.description}</p>
+                  <div className="text-[10px] text-[#64748B] font-mono">
                     Sample Domain: {d.sample_values.slice(0, 4).join(", ")}...
                   </div>
                 </div>
@@ -190,24 +178,22 @@ export const FirewallDashboardView: React.FC = () => {
           </div>
 
           {/* RBAC & Restricted Entities */}
-          <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-xs font-bold text-slate-200 flex items-center gap-2">
-                <Lock className="w-4 h-4 text-rose-400" />
-                Restricted Data Entities (RBAC Blocked)
+          <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-3">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-2">
+              <span className="text-xs font-semibold text-[#F8FAFC] flex items-center gap-2">
+                <Lock className="w-4 h-4 text-[#EF4444]" />
+                Restricted Entities (RBAC Blocked)
               </span>
-              <span className="text-[10px] font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 font-bold">
-                Strict Firewall Rule
-              </span>
+              <StatusBadge status="blocked" label="Strict Boundary" />
             </div>
-            <p className="text-xs text-slate-400">
-              The following entities are strictly protected and cannot be retrieved by unauthorized analyst roles or standard executive queries:
+            <p className="text-xs text-[#94A3B8]">
+              The following entities cannot be retrieved without specialized cryptographic access tokens:
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               {RESTRICTED_ENTITIES.map((ent, idx) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 rounded-xl bg-rose-500/10 border border-rose-500/20 font-mono text-rose-300 text-xs"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F172A] border border-[#EF4444]/30 font-mono text-[#EF4444] text-xs"
                 >
                   {ent}
                 </span>
@@ -216,24 +202,22 @@ export const FirewallDashboardView: React.FC = () => {
           </div>
 
           {/* Prohibited Raw Data Sources */}
-          <div className="p-5 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <span className="text-xs font-bold text-slate-200 flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-amber-400" />
-                Prohibited Raw Data Sources (Zero SQL)
+          <div className="p-5 rounded-2xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-3">
+            <div className="flex items-center justify-between border-b border-[#334155] pb-2">
+              <span className="text-xs font-semibold text-[#F8FAFC] flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-[#F59E0B]" />
+                Prohibited Raw Data Sources
               </span>
-              <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20 font-bold">
-                Direct SQL Prohibited
-              </span>
+              <StatusBadge status="pending" label="Direct SQL Intercepted" />
             </div>
-            <p className="text-xs text-slate-400">
-              Direct SQL access or warehouse table targets are intercepted. The AI agent only accesses certified semantic cubes:
+            <p className="text-xs text-[#94A3B8]">
+              Direct raw table access is prohibited. All analytical requests must target certified semantic cubes:
             </p>
             <div className="flex flex-wrap gap-2 pt-1">
               {PROHIBITED_DATA_SOURCES.map((src, idx) => (
                 <span
                   key={idx}
-                  className="px-2.5 py-1 rounded-xl bg-amber-500/10 border border-amber-500/20 font-mono text-amber-300 text-xs"
+                  className="px-2.5 py-1 rounded-lg bg-[#0F172A] border border-[#F59E0B]/30 font-mono text-[#F59E0B] text-xs"
                 >
                   {src}
                 </span>

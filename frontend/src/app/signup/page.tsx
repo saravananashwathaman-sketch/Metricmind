@@ -263,22 +263,20 @@ function SignupForm() {
   };
 
   // ========================================================
-  // SUCCESS SCREEN (Requirement 15)
+  // SUCCESS SCREEN
   // ========================================================
   if (signupSuccess && createdUser) {
     return (
-      <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14">
+      <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14 bg-[#020617]">
         {/* Top Mobile Brand Bar */}
-        <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-slate-800/80">
+        <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-[#334155]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-md">
-              <Lock className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-lg bg-[#4F46E5] flex items-center justify-center text-white font-bold text-sm">
+              M
             </div>
             <div>
-              <span className="font-bold text-sm tracking-wider uppercase text-slate-100">
-                METRICMIND
-              </span>
-              <span className="block text-[10px] text-slate-400">Agentic Semantic BI</span>
+              <span className="font-bold text-sm text-[#F8FAFC]">METRICMIND</span>
+              <span className="block text-[10px] text-[#64748B]">Agentic Semantic BI</span>
             </div>
           </div>
         </div>
@@ -286,83 +284,81 @@ function SignupForm() {
         {/* Success Card */}
         <div className="w-full max-w-lg mx-auto my-auto py-4">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.98, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="relative rounded-3xl bg-slate-900/85 border border-slate-800/90 p-7 sm:p-9 shadow-2xl backdrop-blur-2xl overflow-hidden text-center space-y-6"
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="rounded-2xl bg-[#1E293B] border border-[#334155] p-7 sm:p-9 shadow-lg text-center space-y-6"
           >
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-emerald-500/60 to-transparent" />
-
-            <div className="w-16 h-16 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400 shadow-xl shadow-emerald-500/10">
-              <CheckCircle2 className="w-9 h-9" />
+            <div className="w-14 h-14 rounded-xl bg-[#10B981]/10 border border-[#10B981]/30 flex items-center justify-center mx-auto text-[#10B981]">
+              <CheckCircle2 className="w-8 h-8" />
             </div>
 
             <div className="space-y-1.5">
-              <h2 className="text-2xl font-bold tracking-tight text-slate-100">
+              <h2 className="text-2xl font-bold tracking-tight text-[#F8FAFC]">
                 Welcome to MetricMind
               </h2>
-              <p className="text-xs sm:text-sm text-slate-300">
+              <p className="text-xs sm:text-sm text-[#94A3B8]">
                 Your account has been created successfully.
               </p>
             </div>
 
             {/* Account Summary Card */}
-            <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 text-left space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
-                <span className="text-[11px] font-medium text-slate-400">Account Summary</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            <div className="p-4 rounded-xl bg-[#0F172A] border border-[#334155] text-left space-y-3">
+              <div className="flex items-center justify-between pb-2 border-b border-[#334155]">
+                <span className="text-[11px] font-medium text-[#94A3B8]">Account Summary</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
                   Active
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div>
-                  <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-mono">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#64748B] font-mono">
                     Full Name
                   </span>
-                  <span className="font-semibold text-slate-200">{createdUser.name}</span>
+                  <span className="font-semibold text-[#F8FAFC]">{createdUser.name}</span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-mono">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#64748B] font-mono">
                     Work Email
                   </span>
-                  <span className="font-mono text-slate-300 text-[11px] truncate block">
+                  <span className="font-mono text-[#94A3B8] text-[11px] truncate block">
                     {createdUser.email}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-mono">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#64748B] font-mono">
                     Organization
                   </span>
-                  <span className="font-semibold text-slate-200">
+                  <span className="font-semibold text-[#F8FAFC]">
                     {createdUser.organization || organization}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-[10px] uppercase tracking-wider text-slate-500 font-mono">
+                  <span className="block text-[10px] uppercase tracking-wider text-[#64748B] font-mono">
                     Initial Role
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-sky-500/15 text-sky-300 border border-sky-500/30 text-[11px] font-medium inline-block">
+                  <span className="px-2 py-0.5 rounded bg-[#4F46E5]/15 text-[#818CF8] border border-[#4F46E5]/30 text-[11px] font-medium inline-block">
                     {createdUser.role || "Executive"}
                   </span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-800/80 flex items-center gap-2 text-[11px] text-slate-400">
-                <ShieldCheck className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <div className="pt-2 border-t border-[#334155] flex items-center gap-2 text-[11px] text-[#94A3B8]">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#06B6D4] shrink-0" />
                 <span>Governed semantic catalog access enabled for your tenant.</span>
               </div>
             </div>
 
             {/* Email Verification Architecture Notice */}
-            <div className="p-3 rounded-xl bg-sky-500/10 border border-sky-500/25 text-left text-xs text-sky-200 flex items-start gap-2.5">
-              <Mail className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+            <div className="p-3 rounded-xl bg-[#0EA5E9]/10 border border-[#0EA5E9]/25 text-left text-xs text-[#0EA5E9] flex items-start gap-2.5">
+              <Mail className="w-4 h-4 text-[#0EA5E9] shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <span className="font-semibold text-sky-300">Email Verification Ready</span>
-                <p className="text-[11px] text-sky-200/80 leading-relaxed">
+                <span className="font-semibold text-[#F8FAFC]">Email Verification Ready</span>
+                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
                   Account created successfully. Check your email if domain verification is required by your enterprise administrator, or visit{" "}
-                  <Link href="/verify-email" className="underline font-semibold hover:text-white">
+                  <Link href="/verify-email" className="underline font-semibold text-[#06B6D4] hover:text-[#38bdf8]">
                     /verify-email
                   </Link>.
                 </p>
@@ -373,7 +369,7 @@ function SignupForm() {
             <button
               type="button"
               onClick={() => router.push(redirectUrl)}
-              className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-600 to-sky-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm tracking-wide shadow-lg shadow-sky-500/20 active:scale-[0.99] transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-[#F8FAFC] font-semibold text-xs sm:text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all cursor-pointer"
             >
               <span>Continue to MetricMind</span>
               <ArrowRight className="w-4 h-4" />
@@ -382,18 +378,18 @@ function SignupForm() {
         </div>
 
         {/* Footer */}
-        <footer className="w-full pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <footer className="w-full pt-4 border-t border-[#334155] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
           <div>&copy; 2026 MetricMind Enterprise. All rights reserved.</div>
           <div className="flex items-center gap-4">
-            <button onClick={() => setModalType("privacy")} className="hover:text-slate-300 transition-colors">
+            <button onClick={() => setModalType("privacy")} className="hover:text-[#94A3B8] transition-colors cursor-pointer">
               Privacy
             </button>
             <span>•</span>
-            <button onClick={() => setModalType("terms")} className="hover:text-slate-300 transition-colors">
+            <button onClick={() => setModalType("terms")} className="hover:text-[#94A3B8] transition-colors cursor-pointer">
               Terms
             </button>
             <span>•</span>
-            <button onClick={() => setModalType("help")} className="hover:text-slate-300 transition-colors">
+            <button onClick={() => setModalType("help")} className="hover:text-[#94A3B8] transition-colors cursor-pointer">
               Help
             </button>
           </div>
@@ -408,45 +404,42 @@ function SignupForm() {
   // MAIN SIGNUP FORM
   // ========================================================
   return (
-    <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14">
+    <div className="flex flex-col justify-between min-h-full p-6 sm:p-10 lg:p-14 bg-[#020617]">
       {/* Top Mobile Brand Bar (Only on small screens) */}
-      <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-slate-800/80">
+      <div className="flex lg:hidden items-center justify-between pb-6 mb-2 border-b border-[#334155]">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 via-indigo-500 to-emerald-400 flex items-center justify-center text-white shadow-md">
-            <Lock className="w-4 h-4" />
+          <div className="w-8 h-8 rounded-lg bg-[#4F46E5] flex items-center justify-center text-white font-bold text-sm">
+            M
           </div>
           <div>
-            <span className="font-bold text-sm tracking-wider uppercase text-slate-100">
+            <span className="font-bold text-sm text-[#F8FAFC]">
               METRICMIND
             </span>
-            <span className="block text-[10px] text-slate-400">Agentic Semantic BI</span>
+            <span className="block text-[10px] text-[#64748B]">Agentic Semantic BI</span>
           </div>
         </div>
         <Link
           href="/login"
-          className="text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium hover:text-white transition-colors"
+          className="text-xs px-2.5 py-1 rounded-lg bg-[#1E293B] text-[#94A3B8] border border-[#334155] font-medium hover:text-[#F8FAFC] transition-colors"
         >
           Sign In
         </Link>
       </div>
 
-      {/* Centered Glassmorphic Signup Card */}
+      {/* Centered Signup Card */}
       <div className="w-full max-w-lg mx-auto my-auto py-4">
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="relative rounded-3xl bg-slate-900/85 border border-slate-800/90 p-7 sm:p-9 shadow-2xl backdrop-blur-2xl overflow-hidden"
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="rounded-2xl bg-[#1E293B] border border-[#334155] p-7 sm:p-9 shadow-lg"
         >
-          {/* Subtle top card glow line */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-sky-500/50 to-transparent" />
-
           {/* Heading & Subtitle */}
           <div className="space-y-1.5 text-left mb-6">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-100">
+            <h2 className="text-2xl font-bold tracking-tight text-[#F8FAFC]">
               Create your MetricMind account
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#94A3B8] leading-relaxed">
               Join your organization and start exploring governed business intelligence.
             </p>
           </div>
@@ -458,10 +451,10 @@ function SignupForm() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2.5"
+                className="mb-5 p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-xs flex items-start gap-2.5"
                 role="alert"
               >
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
+                <AlertCircle className="w-4 h-4 shrink-0 text-[#EF4444] mt-0.5" />
                 <span className="leading-snug">{generalError}</span>
               </motion.div>
             )}
@@ -471,11 +464,11 @@ function SignupForm() {
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
             {/* 1. Full Name */}
             <div className="space-y-1.5">
-              <label htmlFor="fullname-input" className="block text-xs font-semibold text-slate-300">
-                Full Name <span className="text-sky-400">*</span>
+              <label htmlFor="fullname-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                Full Name <span className="text-[#06B6D4]">*</span>
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <User className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="fullname-input"
                   name="name"
@@ -492,15 +485,15 @@ function SignupForm() {
                   placeholder="Enter your full name"
                   aria-invalid={!!nameError}
                   aria-describedby={nameError ? "name-error" : undefined}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                     nameError
-                      ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                      : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                      ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                      : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                   }`}
                 />
               </div>
               {nameError && (
-                <p id="name-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                <p id="name-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                   {nameError}
                 </p>
               )}
@@ -508,11 +501,11 @@ function SignupForm() {
 
             {/* 2. Work Email */}
             <div className="space-y-1.5">
-              <label htmlFor="email-input" className="block text-xs font-semibold text-slate-300">
-                Work Email <span className="text-sky-400">*</span>
+              <label htmlFor="email-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                Work Email <span className="text-[#06B6D4]">*</span>
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Mail className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="email-input"
                   name="email"
@@ -529,15 +522,15 @@ function SignupForm() {
                   placeholder="you@company.com"
                   aria-invalid={!!emailError}
                   aria-describedby={emailError ? "email-error" : undefined}
-                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                     emailError
-                      ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                      : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                      ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                      : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                   }`}
                 />
               </div>
               {emailError && (
-                <p id="email-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                <p id="email-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                   {emailError}
                 </p>
               )}
@@ -547,11 +540,11 @@ function SignupForm() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {/* Organization */}
               <div className="space-y-1.5">
-                <label htmlFor="org-input" className="block text-xs font-semibold text-slate-300">
-                  Organization <span className="text-sky-400">*</span>
+                <label htmlFor="org-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                  Organization <span className="text-[#06B6D4]">*</span>
                 </label>
                 <div className="relative">
-                  <Building className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                  <Building className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                   <input
                     id="org-input"
                     name="organization"
@@ -567,15 +560,15 @@ function SignupForm() {
                     placeholder="Company or organization"
                     aria-invalid={!!organizationError}
                     aria-describedby={organizationError ? "org-error" : undefined}
-                    className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                    className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                       organizationError
-                        ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                        : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                        ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                        : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                     }`}
                   />
                 </div>
                 {organizationError && (
-                  <p id="org-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                  <p id="org-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                     {organizationError}
                   </p>
                 )}
@@ -583,11 +576,11 @@ function SignupForm() {
 
               {/* Job Title */}
               <div className="space-y-1.5">
-                <label htmlFor="title-input" className="block text-xs font-semibold text-slate-300">
-                  Job Title <span className="text-sky-400">*</span>
+                <label htmlFor="title-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                  Job Title <span className="text-[#06B6D4]">*</span>
                 </label>
                 <div className="relative">
-                  <Briefcase className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                  <Briefcase className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                   <input
                     id="title-input"
                     name="jobTitle"
@@ -603,15 +596,15 @@ function SignupForm() {
                     placeholder="e.g. Business Analyst"
                     aria-invalid={!!jobTitleError}
                     aria-describedby={jobTitleError ? "title-error" : undefined}
-                    className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                    className={`w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                       jobTitleError
-                        ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                        : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                        ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                        : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                     }`}
                   />
                 </div>
                 {jobTitleError && (
-                  <p id="title-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                  <p id="title-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                     {jobTitleError}
                   </p>
                 )}
@@ -621,13 +614,13 @@ function SignupForm() {
             {/* 4. Department (Optional) */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="dept-input" className="block text-xs font-semibold text-slate-300">
+                <label htmlFor="dept-input" className="block text-xs font-semibold text-[#F8FAFC]">
                   Department
                 </label>
-                <span className="text-[10px] text-slate-500">Optional</span>
+                <span className="text-[10px] text-[#64748B]">Optional</span>
               </div>
               <div className="relative">
-                <Layers className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Layers className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="dept-input"
                   name="department"
@@ -635,18 +628,18 @@ function SignupForm() {
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
                   placeholder="e.g. Finance or Strategic Planning"
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30 focus:outline-none transition-all"
+                  className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#020617] border border-[#334155] text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20 focus:outline-none transition-all"
                 />
               </div>
             </div>
 
             {/* 5. Password */}
             <div className="space-y-1.5">
-              <label htmlFor="password-input" className="block text-xs font-semibold text-slate-300">
-                Password <span className="text-sky-400">*</span>
+              <label htmlFor="password-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                Password <span className="text-[#06B6D4]">*</span>
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Lock className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="password-input"
                   name="password"
@@ -666,33 +659,33 @@ function SignupForm() {
                   placeholder="Create a strong password"
                   aria-invalid={!!passwordError}
                   aria-describedby={passwordError ? "password-error" : undefined}
-                  className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                     passwordError
-                      ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                      : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                      ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                      : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 p-1 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-2.5 p-1 text-[#64748B] hover:text-[#F8FAFC] transition-colors cursor-pointer"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
-              {/* Password Strength Indicator (Requirement 6) */}
+              {/* Password Strength Indicator */}
               {password.length > 0 && (
-                <div className="pt-1.5 space-y-1.5 animate-in fade-in duration-200">
+                <div className="pt-1.5 space-y-1.5">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-400">Password Strength</span>
+                    <span className="text-[#94A3B8]">Password Strength</span>
                     <span className={`font-semibold ${strengthTextColor}`}>
                       {strengthLabel}
                     </span>
                   </div>
                   {/* Strength Bar */}
-                  <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                  <div className="w-full h-1.5 rounded-full bg-[#0F172A] overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${strengthColor}`}
                       style={{ width: `${strengthPercent}%` }}
@@ -703,51 +696,51 @@ function SignupForm() {
                     <span
                       className={`px-2 py-0.5 rounded-md flex items-center gap-1 border transition-colors ${
                         passwordCriteria.minLength
-                          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                          : "bg-slate-950 text-slate-500 border-slate-800"
+                          ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30"
+                          : "bg-[#020617] text-[#64748B] border-[#334155]"
                       }`}
                     >
-                      {passwordCriteria.minLength ? <Check className="w-3 h-3 text-emerald-400" /> : "•"}
+                      {passwordCriteria.minLength ? <Check className="w-3 h-3 text-[#10B981]" /> : "•"}
                       8+ chars
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded-md flex items-center gap-1 border transition-colors ${
                         passwordCriteria.hasUpper
-                          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                          : "bg-slate-950 text-slate-500 border-slate-800"
+                          ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30"
+                          : "bg-[#020617] text-[#64748B] border-[#334155]"
                       }`}
                     >
-                      {passwordCriteria.hasUpper ? <Check className="w-3 h-3 text-emerald-400" /> : "•"}
+                      {passwordCriteria.hasUpper ? <Check className="w-3 h-3 text-[#10B981]" /> : "•"}
                       Uppercase
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded-md flex items-center gap-1 border transition-colors ${
                         passwordCriteria.hasLower
-                          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                          : "bg-slate-950 text-slate-500 border-slate-800"
+                          ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30"
+                          : "bg-[#020617] text-[#64748B] border-[#334155]"
                       }`}
                     >
-                      {passwordCriteria.hasLower ? <Check className="w-3 h-3 text-emerald-400" /> : "•"}
+                      {passwordCriteria.hasLower ? <Check className="w-3 h-3 text-[#10B981]" /> : "•"}
                       Lowercase
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded-md flex items-center gap-1 border transition-colors ${
                         passwordCriteria.hasNumber
-                          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                          : "bg-slate-950 text-slate-500 border-slate-800"
+                          ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30"
+                          : "bg-[#020617] text-[#64748B] border-[#334155]"
                       }`}
                     >
-                      {passwordCriteria.hasNumber ? <Check className="w-3 h-3 text-emerald-400" /> : "•"}
+                      {passwordCriteria.hasNumber ? <Check className="w-3 h-3 text-[#10B981]" /> : "•"}
                       Number
                     </span>
                     <span
                       className={`px-2 py-0.5 rounded-md flex items-center gap-1 border transition-colors ${
                         passwordCriteria.hasSpecial
-                          ? "bg-emerald-500/10 text-emerald-300 border-emerald-500/30"
-                          : "bg-slate-950 text-slate-500 border-slate-800"
+                          ? "bg-[#10B981]/10 text-[#10B981] border-[#10B981]/30"
+                          : "bg-[#020617] text-[#64748B] border-[#334155]"
                       }`}
                     >
-                      {passwordCriteria.hasSpecial ? <Check className="w-3 h-3 text-emerald-400" /> : "•"}
+                      {passwordCriteria.hasSpecial ? <Check className="w-3 h-3 text-[#10B981]" /> : "•"}
                       Special char
                     </span>
                   </div>
@@ -755,19 +748,19 @@ function SignupForm() {
               )}
 
               {passwordError && (
-                <p id="password-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                <p id="password-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                   {passwordError}
                 </p>
               )}
             </div>
 
-            {/* 6. Confirm Password (Requirement 7) */}
+            {/* 6. Confirm Password */}
             <div className="space-y-1.5">
-              <label htmlFor="confirm-password-input" className="block text-xs font-semibold text-slate-300">
-                Confirm Password <span className="text-sky-400">*</span>
+              <label htmlFor="confirm-password-input" className="block text-xs font-semibold text-[#F8FAFC]">
+                Confirm Password <span className="text-[#06B6D4]">*</span>
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Lock className="w-4 h-4 text-[#64748B] absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   id="confirm-password-input"
                   name="confirmPassword"
@@ -784,29 +777,29 @@ function SignupForm() {
                   placeholder="Re-enter your password"
                   aria-invalid={!!confirmPasswordError}
                   aria-describedby={confirmPasswordError ? "confirm-error" : undefined}
-                  className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-950/70 border text-xs sm:text-sm text-slate-100 placeholder:text-slate-600 focus:outline-none transition-all ${
+                  className={`w-full pl-10 pr-10 py-2.5 rounded-xl bg-[#020617] border text-xs sm:text-sm text-[#F8FAFC] placeholder:text-[#64748B] focus:outline-none transition-all ${
                     confirmPasswordError
-                      ? "border-rose-500/70 focus:border-rose-400 focus:ring-1 focus:ring-rose-500/30"
-                      : "border-slate-800 focus:border-sky-500 focus:ring-1 focus:ring-sky-500/30"
+                      ? "border-[#EF4444] focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444]/20"
+                      : "border-[#334155] focus:border-[#4F46E5] focus:ring-1 focus:ring-[#4F46E5]/20"
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-2.5 p-1 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-2.5 p-1 text-[#64748B] hover:text-[#F8FAFC] transition-colors cursor-pointer"
                   aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {confirmPasswordError && (
-                <p id="confirm-error" className="text-[11px] text-rose-400 mt-1 pl-1">
+                <p id="confirm-error" className="text-[11px] text-[#EF4444] mt-1 pl-1">
                   {confirmPasswordError}
                 </p>
               )}
             </div>
 
-            {/* 7. Terms & Privacy Checkbox (Requirement 8) */}
+            {/* 7. Terms & Privacy Checkbox */}
             <div className="space-y-1 pt-1">
               <div className="flex items-start gap-2.5">
                 <input
@@ -818,9 +811,9 @@ function SignupForm() {
                     setAgreeTerms(e.target.checked);
                     if (termsError) validateTerms(e.target.checked);
                   }}
-                  className="w-4 h-4 mt-0.5 rounded border-slate-700 bg-slate-950/80 text-sky-500 focus:ring-sky-500/40 focus:ring-offset-slate-900 cursor-pointer accent-sky-500"
+                  className="w-4 h-4 mt-0.5 rounded border-[#334155] bg-[#020617] text-[#4F46E5] focus:ring-[#4F46E5]/40 cursor-pointer accent-[#4F46E5]"
                 />
-                <label htmlFor="terms-checkbox" className="text-xs text-slate-300 leading-snug cursor-pointer select-none">
+                <label htmlFor="terms-checkbox" className="text-xs text-[#94A3B8] leading-snug cursor-pointer select-none">
                   I agree to the{" "}
                   <button
                     type="button"
@@ -828,7 +821,7 @@ function SignupForm() {
                       e.preventDefault();
                       setModalType("terms");
                     }}
-                    className="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+                    className="text-[#06B6D4] hover:text-[#38bdf8] font-semibold underline underline-offset-2 transition-colors cursor-pointer"
                   >
                     Terms of Service
                   </button>{" "}
@@ -839,7 +832,7 @@ function SignupForm() {
                       e.preventDefault();
                       setModalType("privacy");
                     }}
-                    className="text-sky-400 hover:text-sky-300 font-semibold underline underline-offset-2 transition-colors cursor-pointer"
+                    className="text-[#06B6D4] hover:text-[#38bdf8] font-semibold underline underline-offset-2 transition-colors cursor-pointer"
                   >
                     Privacy Policy
                   </button>
@@ -847,17 +840,17 @@ function SignupForm() {
                 </label>
               </div>
               {termsError && (
-                <p className="text-[11px] text-rose-400 pl-6">
+                <p className="text-[11px] text-[#EF4444] pl-6">
                   {termsError}
                 </p>
               )}
             </div>
 
-            {/* 8. Primary Create Account Button (Requirement 9) */}
+            {/* 8. Primary Create Account Button */}
             <button
               type="submit"
               disabled={isSubmitting || isDemoSubmitting || signupSuccess}
-              className="w-full relative flex items-center justify-center gap-2 py-2.5 sm:py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-600 to-sky-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm tracking-wide shadow-lg shadow-sky-500/20 active:scale-[0.99] transition-all disabled:opacity-60 cursor-pointer mt-2"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-[#F8FAFC] font-semibold text-xs sm:text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-60 cursor-pointer mt-2"
             >
               {isSubmitting ? (
                 <>
@@ -866,7 +859,7 @@ function SignupForm() {
                 </>
               ) : signupSuccess ? (
                 <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                  <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
                   <span>Account Created</span>
                 </>
               ) : generalError ? (
@@ -884,20 +877,20 @@ function SignupForm() {
           </form>
 
           {/* Divider */}
-          <div className="relative my-5">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-800" />
+              <div className="w-full border-t border-[#334155]" />
             </div>
             <div className="relative flex justify-center text-[10px] uppercase font-mono tracking-wider">
-              <span className="bg-slate-900 px-3 text-slate-500">OR</span>
+              <span className="bg-[#1E293B] px-3 text-[#64748B]">OR</span>
             </div>
           </div>
 
-          {/* Continue with Google (Requirement 17) */}
+          {/* Continue with Google */}
           <button
             type="button"
             onClick={() => setIsGoogleModalOpen(true)}
-            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-slate-950/80 hover:bg-slate-800/90 border border-slate-800 hover:border-slate-700 text-slate-200 text-xs font-semibold transition-all shadow-sm group cursor-pointer"
+            className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#0F172A] hover:bg-[#020617] border border-[#334155] hover:border-[#475569] text-[#F8FAFC] text-xs font-semibold transition-colors shadow-sm cursor-pointer"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -920,69 +913,69 @@ function SignupForm() {
             <span>Continue with Google</span>
           </button>
 
-          {/* Continue in Demo Mode (Requirement 18 - clearly separated) */}
-          <div className="mt-4 pt-4 border-t border-slate-800/80">
+          {/* Continue in Demo Mode */}
+          <div className="mt-4 pt-4 border-t border-[#334155]">
             <button
               type="button"
               onClick={() => handleDemoLogin("Executive")}
               disabled={isDemoSubmitting || isSubmitting}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/30 text-amber-200 transition-all group text-left cursor-pointer"
+              className="w-full flex items-center justify-between p-3 rounded-xl bg-[#0F172A] hover:bg-[#020617] border border-[#F59E0B]/30 text-[#F8FAFC] transition-colors group text-left cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#F59E0B]" />
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-amber-200">
+                    <span className="text-xs font-semibold text-[#F8FAFC]">
                       Continue in Demo Mode
                     </span>
-                    <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 uppercase font-semibold">
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 uppercase font-semibold">
                       DEMO MODE
                     </span>
                   </div>
-                  <p className="text-[10px] text-amber-300/80 mt-0.5">
+                  <p className="text-[10px] text-[#94A3B8] mt-0.5">
                     Explore MetricMind without creating a new corporate account.
                   </p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-amber-400/70 group-hover:translate-x-0.5 transition-transform shrink-0" />
+              <ChevronRight className="w-4 h-4 text-[#94A3B8] group-hover:translate-x-0.5 transition-transform shrink-0" />
             </button>
           </div>
 
-          {/* Already have an account? Sign in (Requirement 16) */}
-          <div className="mt-5 pt-3.5 border-t border-slate-800/70 text-center text-xs text-slate-400">
+          {/* Already have an account? Sign in */}
+          <div className="mt-5 pt-3.5 border-t border-[#334155] text-center text-xs text-[#94A3B8]">
             <span>Already have an account? </span>
             <Link
               href="/login"
-              className="text-sky-400 hover:text-sky-300 font-semibold hover:underline underline-offset-2 transition-all cursor-pointer inline-flex items-center gap-1 group"
+              className="text-[#4F46E5] hover:text-[#818CF8] font-semibold transition-colors inline-flex items-center gap-1"
             >
               <span>Sign in</span>
-              <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
         </motion.div>
       </div>
 
       {/* Footer */}
-      <footer className="w-full pt-4 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <footer className="w-full pt-4 border-t border-[#334155] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#64748B]">
         <div>&copy; 2026 MetricMind Enterprise. All rights reserved.</div>
         <div className="flex items-center gap-4">
           <button
             onClick={() => setModalType("privacy")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Privacy
           </button>
           <span>•</span>
           <button
             onClick={() => setModalType("terms")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Terms
           </button>
           <span>•</span>
           <button
             onClick={() => setModalType("help")}
-            className="hover:text-slate-300 transition-colors"
+            className="hover:text-[#94A3B8] transition-colors cursor-pointer"
           >
             Help
           </button>
@@ -1004,18 +997,18 @@ function SignupForm() {
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:grid lg:grid-cols-12 selection:bg-sky-500/30 selection:text-sky-200">
-      {/* LEFT SIDE: Brand / Product Showcase (5 cols on xl, 6 cols on lg) */}
-      <div className="lg:col-span-6 xl:col-span-5 hidden lg:block">
+    <div className="min-h-screen bg-[#020617] text-[#F8FAFC] flex flex-col lg:grid lg:grid-cols-12">
+      {/* LEFT SIDE: Brand / Product Showcase */}
+      <div className="lg:col-span-6 xl:col-span-5 hidden lg:block border-r border-[#334155]">
         <BrandPanel />
       </div>
 
-      {/* RIGHT SIDE: Centered Create Account Card (7 cols on xl, 6 cols on lg) */}
-      <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center min-h-screen bg-slate-950/90 relative">
+      {/* RIGHT SIDE: Centered Create Account Card */}
+      <div className="lg:col-span-6 xl:col-span-7 flex flex-col justify-center min-h-screen bg-[#020617]">
         <Suspense
           fallback={
-            <div className="flex items-center justify-center p-12 text-slate-400">
-              <Loader2 className="w-6 h-6 animate-spin text-sky-400" />
+            <div className="flex items-center justify-center p-12 text-[#94A3B8]">
+              <Loader2 className="w-6 h-6 animate-spin text-[#4F46E5]" />
             </div>
           }
         >

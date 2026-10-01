@@ -68,13 +68,13 @@ export const DatabaseAdminView: React.FC = () => {
   return (
     <div className="flex flex-col flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-[#334155] pb-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-100 tracking-tight flex items-center gap-2.5">
-            <Database className="w-6 h-6 text-sky-400" />
+          <h1 className="text-2xl font-bold text-[#F8FAFC] tracking-tight flex items-center gap-2.5">
+            <Database className="w-6 h-6 text-[#4F46E5]" />
             Database Administration & Health Console
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-[#94A3B8] mt-1">
             PostgreSQL connectivity status, table statistics, and verified read-only analytical query console.
           </p>
         </div>
@@ -82,7 +82,7 @@ export const DatabaseAdminView: React.FC = () => {
         <button
           onClick={loadDatabaseStats}
           disabled={isLoading}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#0F172A] hover:bg-[#020617] border border-[#334155] text-xs font-semibold text-[#F8FAFC] transition-colors cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
           <span>Refresh Health</span>
@@ -92,65 +92,65 @@ export const DatabaseAdminView: React.FC = () => {
       {/* Main Health & KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Status */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+        <div className="p-5 rounded-xl bg-[#1E293B] border border-[#334155] space-y-2">
+          <div className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center justify-between">
             <span>Database Status</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#10B981]" />
           </div>
-          <div className="text-xl font-bold text-emerald-400 flex items-center gap-2">
+          <div className="text-xl font-bold text-[#10B981] flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5" />
             <span>Connected</span>
           </div>
-          <div className="text-[11px] text-slate-400">
+          <div className="text-[11px] text-[#94A3B8]">
             Engine: {healthData?.database || "PostgreSQL"}
           </div>
         </div>
 
         {/* Latency */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+        <div className="p-5 rounded-xl bg-[#1E293B] border border-[#334155] space-y-2">
+          <div className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">
             Response Latency
           </div>
-          <div className="text-2xl font-black text-slate-100 font-mono">
+          <div className="text-2xl font-bold text-[#F8FAFC] font-mono">
             {healthData?.latency_ms || 1.4} ms
           </div>
-          <div className="text-[11px] text-emerald-400">
+          <div className="text-[11px] text-[#10B981]">
             Optimal for real-time analytics
           </div>
         </div>
 
         {/* Governed Semantic View */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+        <div className="p-5 rounded-xl bg-[#1E293B] border border-[#334155] space-y-2">
+          <div className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider">
             Semantic View
           </div>
-          <div className="text-base font-bold text-sky-400 font-mono truncate">
+          <div className="text-base font-bold text-[#06B6D4] font-mono truncate">
             semantic_sales
           </div>
-          <div className="text-[11px] text-slate-400">
+          <div className="text-[11px] text-[#94A3B8]">
             Status: Active & Synchronized
           </div>
         </div>
 
         {/* Last Successful Query */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-            <Clock className="w-3.5 h-3.5 text-slate-400" />
+        <div className="p-5 rounded-xl bg-[#1E293B] border border-[#334155] space-y-2">
+          <div className="text-[10px] font-semibold text-[#94A3B8] uppercase tracking-wider flex items-center gap-1">
+            <Clock className="w-3.5 h-3.5 text-[#64748B]" />
             <span>Last Successful Query</span>
           </div>
-          <div className="text-xs text-slate-200 font-mono truncate">
+          <div className="text-xs text-[#F8FAFC] font-mono truncate">
             {healthData?.last_successful_query ? new Date(healthData.last_successful_query).toLocaleTimeString() : "Just now"}
           </div>
-          <div className="text-[10px] text-slate-500">
+          <div className="text-[10px] text-[#64748B]">
             Audit logging: 100% recorded
           </div>
         </div>
       </div>
 
       {/* Record Counts for All 6 Tables */}
-      <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
-        <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
-          <Table className="w-4 h-4 text-sky-400" />
+      <div className="p-6 rounded-xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-4">
+        <h3 className="text-xs font-semibold text-[#F8FAFC] uppercase tracking-wider flex items-center gap-2">
+          <Table className="w-4 h-4 text-[#06B6D4]" />
           Enterprise Table Record Counts
         </h3>
 
@@ -163,25 +163,25 @@ export const DatabaseAdminView: React.FC = () => {
             { label: "order_items", count: healthData?.counts?.order_items || 45, desc: "Line items" },
             { label: "metrics", count: healthData?.counts?.metrics || 5, desc: "Governed metrics" }
           ].map((item, i) => (
-            <div key={i} className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80 text-center space-y-1">
-              <span className="text-[10px] font-mono text-slate-400 uppercase">{item.label}</span>
-              <div className="text-2xl font-black text-slate-100 font-mono">{item.count}</div>
-              <p className="text-[9px] text-slate-500 truncate">{item.desc}</p>
+            <div key={i} className="p-3.5 rounded-xl bg-[#0F172A] border border-[#334155] text-center space-y-1">
+              <span className="text-[10px] font-mono text-[#94A3B8] uppercase">{item.label}</span>
+              <div className="text-2xl font-bold text-[#F8FAFC] font-mono">{item.count}</div>
+              <p className="text-[9px] text-[#64748B] truncate">{item.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Interactive Read-Only SQL Console */}
-      <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      <div className="p-6 rounded-xl bg-[#1E293B] border border-[#334155] shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-[#334155] pb-3">
           <div className="flex items-center gap-2">
-            <FileCode className="w-4 h-4 text-emerald-400" />
-            <h3 className="text-xs font-bold text-slate-200 uppercase tracking-wider">
+            <FileCode className="w-4 h-4 text-[#10B981]" />
+            <h3 className="text-xs font-semibold text-[#F8FAFC] uppercase tracking-wider">
               Governed Read-Only SQL Test Console
             </h3>
           </div>
-          <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[10px] font-semibold text-[#10B981] bg-[#10B981]/10 px-2 py-0.5 rounded border border-[#10B981]/20">
             Safety Gatekeeper Active
           </span>
         </div>
@@ -197,7 +197,7 @@ export const DatabaseAdminView: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => setCustomSql(q)}
-                className="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-[11px] font-mono text-slate-300"
+                className="px-2.5 py-1 rounded-lg bg-[#0F172A] hover:bg-[#020617] border border-[#334155] text-[11px] font-mono text-[#94A3B8] hover:text-[#F8FAFC] transition-colors cursor-pointer"
               >
                 Sample {idx + 1}
               </button>
@@ -208,16 +208,16 @@ export const DatabaseAdminView: React.FC = () => {
             value={customSql}
             onChange={(e) => setCustomSql(e.target.value)}
             rows={3}
-            className="w-full p-3 rounded-2xl bg-black/60 border border-slate-800 text-xs font-mono text-emerald-300 focus:outline-none focus:border-emerald-500/50"
+            className="w-full p-3 rounded-xl bg-[#020617] border border-[#334155] text-xs font-mono text-[#F8FAFC] focus:outline-none focus:border-[#4F46E5]"
           />
 
           <div className="flex justify-end">
             <button
               onClick={handleExecuteConsole}
               disabled={isRunningQuery}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white text-xs font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-[#F8FAFC] text-xs font-semibold transition-all shadow-sm flex items-center gap-2 disabled:opacity-50 cursor-pointer"
             >
-              <Play className="w-3.5 h-3.5 fill-white" />
+              <Play className="w-3.5 h-3.5 fill-current" />
               <span>Execute Governed Query</span>
             </button>
           </div>
@@ -225,32 +225,32 @@ export const DatabaseAdminView: React.FC = () => {
 
         {/* Error message */}
         {errorMessage && (
-          <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="p-3.5 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-xs flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-[#EF4444] shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {/* Results Table */}
         {queryResult && (
-          <div className="space-y-2 pt-2 animate-in fade-in duration-150">
-            <div className="flex items-center justify-between text-xs text-slate-400">
+          <div className="space-y-2 pt-2">
+            <div className="flex items-center justify-between text-xs text-[#94A3B8]">
               <span>Returned {queryResult.row_count} rows in {queryResult.execution_time_ms}ms ({queryResult.source})</span>
             </div>
-            <div className="overflow-x-auto rounded-2xl border border-slate-800">
+            <div className="overflow-x-auto rounded-xl border border-[#334155]">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-950 text-slate-400 uppercase text-[10px] font-semibold">
+                <thead className="bg-[#020617] text-[#94A3B8] uppercase text-[10px] font-semibold">
                   <tr>
                     {Object.keys(queryResult.rows[0] || {}).map((c) => (
                       <th key={c} className="px-3 py-2.5">{c}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-900/50">
+                <tbody className="divide-y divide-[#334155] bg-[#0F172A]">
                   {queryResult.rows.map((row: any, rIdx: number) => (
-                    <tr key={rIdx} className="hover:bg-slate-900">
+                    <tr key={rIdx} className="hover:bg-[#1E293B]">
                       {Object.values(row).map((v: any, cIdx: number) => (
-                        <td key={cIdx} className="px-3 py-2 font-mono text-slate-200">
+                        <td key={cIdx} className="px-3 py-2 font-mono text-[#F8FAFC]">
                           {typeof v === "number" ? v.toLocaleString() : String(v)}
                         </td>
                       ))}

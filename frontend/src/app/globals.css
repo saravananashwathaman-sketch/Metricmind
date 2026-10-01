@@ -1,14 +1,40 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-accent: #06B6D4;
+  --color-brand-bg: #020617;
+  --color-surface: #0F172A;
+  --color-card: #1E293B;
+  --color-border: #334155;
+  --color-text-primary: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #0EA5E9;
+  --color-secondary-accent: #8B5CF6;
+}
+
 :root {
   --background: #020617;
-  --foreground: #f8fafc;
+  --surface: #0F172A;
+  --card: #1E293B;
+  --border: #334155;
+  --primary: #4F46E5;
+  --primary-hover: #4338CA;
+  --accent: #06B6D4;
+  --foreground: #F8FAFC;
+  --muted: #94A3B8;
+  --subtle: #64748B;
 }
 
 body {
   background-color: #020617;
-  color: #f8fafc;
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #F8FAFC;
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
 }
 
@@ -19,21 +45,70 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #0F172A;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.7);
+  background: #334155;
   border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.9);
+  background: #475569;
 }
 
-/* Custom Glows & Utilities */
+/* Enterprise Card Utility */
+.enterprise-card {
+  background-color: #1E293B;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.enterprise-card:hover {
+  border-color: #475569;
+}
+
+/* Input Fields Utility */
+.enterprise-input {
+  background-color: #020617;
+  border: 1px solid #334155;
+  color: #F8FAFC;
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.enterprise-input::placeholder {
+  color: #64748B;
+}
+
+.enterprise-input:focus {
+  outline: none;
+  border-color: #4F46E5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+}
+
+/* Primary Button Utility */
+.btn-primary {
+  background-color: #4F46E5;
+  color: #F8FAFC;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background-color: #4338CA;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+/* Subtle clean glass panel without neon */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid #334155;
 }
