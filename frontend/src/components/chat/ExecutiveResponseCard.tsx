@@ -19,12 +19,22 @@ import {
   Copy,
   GitFork,
   History,
-  Clock
+  Clock,
+  Terminal,
+  Database
 } from "lucide-react";
 import { MetricMindChatResponse } from "@/types";
 import { WaterfallChart } from "@/components/charts/WaterfallChart";
 import { ComparisonBarChart } from "@/components/charts/ComparisonBarChart";
 import { TrendLineChart } from "@/components/charts/TrendLineChart";
+import { DynamicChartRenderer } from "@/components/charts/DynamicChartRenderer";
+import { AgentExecutionSteps } from "./AgentExecutionSteps";
+import { QueryBudget } from "./QueryBudget";
+import { QueryGovernanceBadge } from "./QueryGovernanceBadge";
+import { AnalysisEvidence } from "./AnalysisEvidence";
+import { TransparencyPanel } from "./TransparencyPanel";
+import { RootCauseBreakdown } from "./RootCauseBreakdown";
+import { QueryAudit } from "./QueryAudit";
 
 import { FirewallBlockedCardView } from "@/components/firewall/FirewallBlockedCardView";
 
@@ -49,6 +59,11 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
   const [activeTab, setActiveTab] = useState<"chart" | "evidence">("chart");
   const [copiedFormula, setCopiedFormula] = useState(false);
   const [chartViewType, setChartViewType] = useState<"waterfall" | "bar" | "trend">("waterfall");
+
+  // Advanced Upgrades State (Part 1 - 5)
+  const [showTransparency, setShowTransparency] = useState(false);
+  const [transparencyTab, setTransparencyTab] = useState<"semantic" | "api" | "sql" | "response">("api");
+  const [showAnalysisSteps, setShowAnalysisSteps] = useState(true);
 
   // Trust & Audit Expandables State
   const [activeAuditDrawer, setActiveAuditDrawer] = useState<
@@ -100,9 +115,49 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
             <span className="text-[11px] font-mono text-slate-500">
               Resolved in {response.processing_time_ms}ms
             </span>
+            {response.queries && (
+              <QueryBudget budget={response.queries} />
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Action Buttons from Specification */}
+            <button
+              onClick={() => setShowAnalysisSteps((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all ${
+                showAnalysisSteps
+                  ? "bg-sky-500/20 text-sky-300 border-sky-500/40 shadow-sm"
+                  : "bg-slate-900 text-slate-300 hover:text-sky-300 border-slate-800"
+              }`}
+              title="Toggle Multi-Step Analysis Execution Steps"
+            >
+              <span>📊 View Analysis</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setTransparencyTab("api");
+                setShowTransparency(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-sky-500/30 text-xs font-semibold text-slate-300 hover:text-sky-300 transition-all"
+              title="Inspect sanitized Cube REST API payload"
+            >
+              <Terminal className="w-3.5 h-3.5 text-sky-400" />
+              <span>🔍 View API Call</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setTransparencyTab("sql");
+                setShowTransparency(true);
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/30 text-xs font-semibold text-slate-300 hover:text-emerald-300 transition-all font-mono"
+              title="Inspect semantic layer SQL execution"
+            >
+              <Database className="w-3.5 h-3.5 text-emerald-400" />
+              <span>SQL</span>
+            </button>
+
             <button
               onClick={() =>
                 onExplainNumber?.(
@@ -116,7 +171,7 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
               title="Reconstruct how this value was calculated in MetricMind Time Machine"
             >
               <History className="w-3.5 h-3.5 text-sky-400 group-hover:rotate-[-45deg] transition-transform" />
-              <span>Explain This Number</span>
+              <span className="hidden lg:inline">Explain This Number</span>
             </button>
 
             <button
@@ -138,7 +193,7 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
               }`}
             >
               {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
-              <span>{isSaved ? "Saved to Insights" : "Save Insight"}</span>
+              <span>{isSaved ? "Saved" : "Save"}</span>
             </button>
           </div>
 
@@ -151,6 +206,35 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
 
       {/* Main Body */}
       <div className="p-6 space-y-6">
+        {/* Transparency Drawer Panel (Toggled via [View API Call] / [SQL]) */}
+        {showTransparency && (
+          <div className="space-y-2">
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowTransparency(false)}
+                className="px-2.5 py-1 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+              >
+                Close Transparency Panel ✕
+              </button>
+            </div>
+            <TransparencyPanel
+              question={question}
+              resolvedIntent={response.answer?.evidence_summary}
+              semanticJson={response.semantic_query}
+              apiCall={response.api_call}
+              sqlInfo={response.sql_info}
+              evidence={evidence}
+              normalizedData={response.primary_chart_data}
+              initialTab={transparencyTab}
+            />
+          </div>
+        )}
+
+        {/* Compact Safe Execution Steps Panel (Part 1 Multi-Step Reasoning) */}
+        {showAnalysisSteps && response.analysis?.steps && response.analysis.steps.length > 0 && (
+          <AgentExecutionSteps steps={response.analysis.steps} />
+        )}
+
         {/* Section 1: Executive Summary */}
         <div className="p-4 rounded-2xl bg-gradient-to-r from-sky-500/10 via-indigo-500/5 to-transparent border border-sky-500/20 space-y-2">
           <div className="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -539,8 +623,11 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
           </div>
 
           {activeTab === "chart" ? (
-            <div className="space-y-4">
-              {primary_chart_type === "waterfall" ? (
+            <div className="space-y-6">
+              {/* Dynamic Visualization Engine / ECharts Registry */}
+              {response.visualization ? (
+                <DynamicChartRenderer visualization={response.visualization} height="320px" />
+              ) : primary_chart_type === "waterfall" ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs text-slate-400 px-1">
                     <span>European Margin Driver Bridge (Waterfall)</span>
@@ -579,58 +666,23 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
                 />
               )}
 
-              {/* Driver & Regional Contribution Details Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {/* Cost Drivers */}
-                <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                    <span>Contributing Cost Drivers</span>
-                    <span className="text-[10px] text-slate-500">OPEX / COGS Impact</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {drivers.map((d, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50 text-xs"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                          <span className="text-slate-200 font-medium">{d.driver}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-rose-400 font-mono font-semibold">{d.change_pct}</span>
-                          <span className="text-slate-400 text-[10px]">({d.impact_pp} pp)</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+              {/* Contributing Cost Drivers & Regional Contributions */}
+              <RootCauseBreakdown
+                drivers={drivers}
+                regionalBreakdown={regional_breakdown}
+              />
 
-                {/* Regional Breakdown */}
-                <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between">
-                    <span>Regional Breakdown</span>
-                    <span className="text-[10px] text-slate-500">Country Margin Impact</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {regional_breakdown.map((r, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-2 rounded-lg bg-slate-950/50 text-xs"
-                      >
-                        <div className="flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
-                          <span className="text-slate-200 font-medium">{r.value_name}</span>
-                        </div>
-                        <div className="flex items-center gap-2 font-mono">
-                          <span className="text-slate-400 text-[11px]">{r.previous_value}% → {r.current_value}%</span>
-                          <span className="text-rose-400 font-bold">{r.weighted_impact_pp} pp</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              {/* Structured Traceable Analysis Evidence */}
+              <AnalysisEvidence
+                primaryMetric={governed_metric.name}
+                period={kpi_comparison.current_period}
+                region={calculation_details.applied_filters?.region || "Europe"}
+                secondaryAnalysis={drivers.length > 0 ? "Cost Drivers (Logistics, Materials, OPEX)" : "Primary Resolution"}
+                queryCount={response.queries?.count || 1}
+                semanticDefinition={`${governed_metric.name} (v${governed_metric.version})`}
+                governedSignature={evidence.governed_signature}
+                evidenceTable={evidence}
+              />
             </div>
           ) : (
             /* Evidence Table */
@@ -758,6 +810,21 @@ export const ExecutiveResponseCard: React.FC<ExecutiveResponseCardProps> = ({
             </div>
           </div>
         )}
+
+        {/* Section 7: Governance Badges & Audit Trail */}
+        <div className="pt-4 border-t border-slate-800/80 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <QueryGovernanceBadge
+              governance={response.governance}
+              queryCount={response.queries?.count || 1}
+              cached={response.cached}
+            />
+          </div>
+
+          {response.audit_record && (
+            <QueryAudit audit={response.audit_record} />
+          )}
+        </div>
       </div>
     </div>
   );

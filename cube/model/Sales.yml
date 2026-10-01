@@ -64,6 +64,27 @@ cubes:
         type: number
         format: currency
 
+      - name: logistics_cost
+        title: "Logistics Cost"
+        description: "Freight and logistics surcharges"
+        sql: "{CUBE}.logistics_cost"
+        type: sum
+        format: currency
+
+      - name: material_cost
+        title: "Material Cost"
+        description: "Direct bill of materials and fabrication cost"
+        sql: "{CUBE}.material_cost"
+        type: sum
+        format: currency
+
+      - name: operating_cost
+        title: "Operating Cost"
+        description: "Operating and fulfillment delivery expenses"
+        sql: "{CUBE}.operating_cost"
+        type: sum
+        format: currency
+
     dimensions:
       - name: sales_id
         sql: "{CUBE}.sales_id"

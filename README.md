@@ -1,218 +1,310 @@
-# METRICMIND — Agentic Semantic BI Engine
+# METRICMIND — Agentic Semantic BI Engine with Cube.dev
 
 > **"Ask business questions. Get governed answers."**  
-> *AI reasons over governed business semantics instead of inventing business logic.*
+> *The AI agent reasons over governed business metrics in Cube.dev instead of generating raw SQL.*
 
 ---
 
-## 1. Executive Summary & Problem Statement
+## 1. What is Cube.dev?
 
-### The Problem with Traditional Text-to-SQL
-Traditional AI chatbots for BI rely on direct **Text-to-SQL**, where an LLM generates raw SQL queries against production database tables. In enterprise finance and operations, this pattern causes severe issues:
-1. **Metric Drift & Hallucinations**: Different queries compute "Gross Margin", "Churn", or "Revenue" with inconsistent math.
-2. **Security & Governance Vulnerabilities**: Un-governed LLMs can query unauthorized tables, leak PII, or execute rogue queries.
-3. **Lack of Explainability**: Business executives cannot verify whether an answer follows corporate accounting standards.
+[Cube.dev](https://cube.dev/) is an open-source universal semantic layer designed for enterprise data applications and BI engines. It provides:
+1. **Centralized Metric Governance**: Single source of truth for business calculations (Revenue, Gross Margin, Total Orders, Average Order Value).
+2. **Schema & Multi-Dimensional Modeling**: Declarative YAML data models (`Sales.yml`, `Orders.yml`, `Geography.yml`, `Date.yml`, `Customers.yml`).
+3. **High-Performance Query Engine**: Converts structured JSON queries (`POST /cubejs-api/v1/load`) into optimized SQL executed against the underlying data warehouse (PostgreSQL / Snowflake).
+4. **Access Control & Security**: Restricts access, governs dimensions, and prevents rogue data queries.
 
-### The MetricMind Solution
-**MetricMind** replaces Text-to-SQL with an **Agentic Semantic BI Architecture**:
-- The LLM **never** generates arbitrary SQL against raw database tables.
-- All analytical reasoning operates over **governed semantic metrics and dimensions** (Cube.dev / dbt Semantic Layer).
-- Every response provides complete **explainability, mathematical formulas, dimensional drivers, cryptographic audit signatures, and end-to-end data lineage**.
+---
 
+## 2. Why MetricMind Uses Cube as the Semantic Layer
+
+Traditional AI business intelligence systems rely on direct **Text-to-SQL**, where an LLM translates a user question into arbitrary SQL queries executed directly against a database. In enterprise finance and operations, this leads to:
+- **Metric Drift & Hallucinations**: Multiple queries calculate "Gross Margin" with different formulas, leading to conflicting answers across departments.
+- **Security Hazards**: The LLM could access unauthorized tables, expose sensitive customer PII, or execute expensive unbounded full-table scans.
+- **Unverifiable Explanations**: Business executives cannot verify whether an answer reflects standard corporate accounting practices.
+
+### The MetricMind Solution:
+**MetricMind shifts the architecture entirely:**
 ```
-User Question
-      ↓
-Conversational BI Interface (Ask MetricMind)
-      ↓
-AI Agent / Agentic Orchestrator (12-Step Governance Workflow)
-      ↓
-Metric & Dimension Identification
-      ↓
-Semantic Layer (Cube.dev / dbt Semantic Layer)
-      ↓
-Governed Metric Definitions (Single Source of Truth)
-      ↓
-Semantic Query Execution
-      ↓
-Enterprise Data Warehouse (Snowflake / Lakehouse)
-      ↓
-Analytical Reasoning Engine (Variance & Driver Decomposition)
-      ↓
-Interactive Charts (ECharts Waterfall/Bar) + Executive Explanation + Evidence
+❌ OLD PATTERN: User Question → LLM → Raw SQL → Database
+✅ METRICMIND:  User Question → Agentic Orchestrator → Governed Metric Selection → Cube Query JSON → AI Hallucination Firewall → Cube REST API → PostgreSQL → Verified Result → AI Explanation
 ```
 
----
-
-## 2. Key Architecture & Features
-
-### 🌟 1. "Ask MetricMind" Conversational BI
-- Natural-language business question interface with real-time **12-Step Agentic Reasoning Progress UI**.
-- Resolves intent, maps entities to approved catalog metrics, retrieves data through the semantic layer, and synthesizes executive driver narratives.
-- Automatically selects the optimal visualization (Driver Waterfall, Comparison Bar, Multi-quarter Trend line).
-
-### 🏛️ 2. Governed Semantic Catalog
-- 9 verified enterprise metrics: **Gross Revenue, Cost of Goods Sold (COGS), Gross Profit, Gross Margin %, Net Profit, Customer Churn Rate, Order Count, Average Order Value (AOV), and Customer Lifetime Value (CLV)**.
-- Full mathematical formula transparency, dbt source models, dimensional grain, and owner verification workflows.
-- Currency formatted exclusively in **INR (₹, Cr, Lakhs)**.
-
-### 🛡️ 3. Zero Rogue SQL Blocker & Governance Gateway
-- **Zero Direct SQL Policy**: Strict architectural separation preventing LLMs from executing raw SQL.
-- **Interactive Rogue SQL Simulator**: Test arbitrary SQL injection or un-governed queries and observe real-time interception, risk scoring, and semantic remediation.
-- Enterprise Role-Based Access Control (**Admin, Executive, Finance Analyst, Sales Analyst**) with dimensional data masking and real-time audit logging.
-
-### 🔗 4. End-to-End Data Lineage DAG
-- Interactive DAG mapping:
-  `User Question → Governed Metric → Semantic Definition → dbt Mart → Fact/Dimension Tables → Snowflake Warehouse`
-- Inspectable layer parameters, freshness monitors, and compliance assertions.
-
-### 📊 5. Executive Overview & Analytics Studio
-- 6 KPI cards with sparklines, period-over-period delta indicators, and subtext context.
-- Margin variance waterfall decomposition bridges.
-- Multi-theater revenue and margin historical trends.
-- Saved Insights knowledge repository and chronological Query History audit logs.
+The LLM is **never allowed to generate unrestricted SQL**. Cube serves as the governed boundary between the AI agent and PostgreSQL.
 
 ---
 
-## 3. Technology Stack
+## 3. System Architecture
 
-### Frontend
-- **Framework**: Next.js (App Router, Turbopack)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS, Vanilla CSS design tokens, Glassmorphism
-- **Visualizations**: Apache ECharts (`echarts-for-react`)
-- **Icons**: Lucide React
-- **Animations**: Framer Motion & CSS Micro-interactions
+```mermaid
+flowchart TD
+    User([User / Executive]) --> Chat[Ask MetricMind Chat UI]
+    Chat --> Orchestrator[Agentic Orchestrator]
+    
+    subgraph GovernanceGateway [Governance Gateway]
+        Orchestrator --> Intent[Intent Detection & Parameter Extraction]
+        Intent --> MetricMap[Governed Metric & Dimension Resolution]
+        MetricMap --> CubeQueryBuilder[Cube Query Builder JSON]
+        CubeQueryBuilder --> Firewall{🛡️ AI Hallucination Firewall}
+        Firewall -- Unknown Metric --> Blocked[Query Blocked: Not Governed]
+        Firewall -- Valid Query --> CostCheck{💰 Cost Governance}
+        CostCheck -- Unbounded Range --> BlockedCost[Query Blocked: Exceeds Limits]
+    end
 
-### Backend
-- **Framework**: Python FastAPI
-- **Data & Warehouse**: SQLite Analytical Warehouse (seeded with realistic corporate ERP/CRM datasets in INR currency; architected for seamless Snowflake plug-in)
-- **Semantic Layer**: Semantic Query Engine & Catalog (Cube.dev / dbt Semantic Layer specification)
-- **AI Orchestration**: 12-Step Agentic Semantic BI Orchestrator with Deterministic Statistical Driver Decomposition
+    subgraph SemanticLayer [Cube.dev Semantic Layer]
+        CostCheck -- Approved --> CubeClient[Cube REST Client]
+        CubeClient --> CubeREST[POST /cubejs-api/v1/load]
+        CubeREST --> CubeModels[Cube Models: Sales.yml, Orders.yml, Geography.yml]
+    end
 
----
+    subgraph Warehouse [PostgreSQL Warehouse]
+        CubeModels --> Postgres[(PostgreSQL semantic_sales)]
+        Postgres --> Result[Structured Normalized Result]
+    end
 
-## 4. Project Structure
+    subgraph ExplanationEngine [AI Analytical Explanation]
+        Result --> Analysis[Driver & Variance Analysis Engine]
+        Analysis --> VizEngine[Dynamic Visualization Engine]
+        VizEngine --> ExecutiveCard[Executive Response Card]
+        ExecutiveCard --> Transparency[View API Call / View SQL Panel]
+    end
 
-```
-MetricMind/
-├── backend/
-│   ├── app/
-│   │   ├── agent/
-│   │   │   ├── orchestrator.py        # 12-step agentic orchestrator
-│   │   │   └── reasoning_engine.py    # Variance & root-cause driver decomposition
-│   │   ├── api/
-│   │   │   ├── chat.py                # Conversational BI endpoint
-│   │   │   ├── metrics.py             # Governed Metric Catalog API
-│   │   │   ├── analytics.py           # Executive KPIs and trends
-│   │   │   ├── lineage.py             # End-to-end DAG data lineage
-│   │   │   ├── governance.py          # RBAC & Rogue SQL Blocker simulator
-│   │   │   ├── history.py             # Query history logs
-│   │   │   └── insights.py            # Saved insights CRUD
-│   │   ├── core/
-│   │   │   └── config.py              # Application settings & environment
-│   │   ├── data/
-│   │   │   ├── database.py            # Analytical DB manager & schema
-│   │   │   └── mock_data_generator.py # Seed realistic enterprise orders & expenses
-│   │   ├── semantic_layer/
-│   │   │   ├── catalog.py             # Governed metric definitions & metadata
-│   │   │   └── query_engine.py        # Semantic query resolver & runner
-│   │   └── main.py                    # FastAPI application entry point
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   │   ├── globals.css            # Dark enterprise theme tokens
-│   │   │   ├── layout.tsx             # Root layout & metadata
-│   │   │   └── page.tsx               # Primary dashboard & view switcher
-│   │   ├── components/
-│   │   │   ├── charts/
-│   │   │   │   ├── EChartWrapper.tsx  # Dynamic client-side ECharts renderer
-│   │   │   │   ├── WaterfallChart.tsx # Driver waterfall bridge chart
-│   │   │   │   ├── TrendLineChart.tsx # Multi-series trend chart
-│   │   │   │   ├── ComparisonBarChart.tsx
-│   │   │   │   └── Sparkline.tsx      # KPI micro-charts
-│   │   │   ├── chat/
-│   │   │   │   ├── ChatInterface.tsx  # Conversational BI interface
-│   │   │   │   ├── ReasoningProgress.tsx # 12-step agentic progress UI
-│   │   │   │   ├── ExecutiveResponseCard.tsx # Structured answers & explainability
-│   │   │   │   └── SuggestedPrompts.tsx
-│   │   │   ├── layout/
-│   │   │   │   ├── Sidebar.tsx        # Enterprise sidebar navigation
-│   │   │   │   ├── TopNav.tsx         # Global filters & role switcher
-│   │   │   │   └── CommandPalette.tsx # ⌘K quick search
-│   │   │   └── views/
-│   │   │       ├── OverviewView.tsx   # Executive overview dashboard
-│   │   │       ├── ExecutiveAnalyticsView.tsx # Multi-dimensional analytics
-│   │   │       ├── SemanticCatalogView.tsx    # Governed metric catalog
-│   │   │       ├── DataLineageView.tsx        # Lineage DAG graph
-│   │   │       ├── GovernanceView.tsx # RBAC & Rogue SQL Blocker
-│   │   │       ├── SavedInsightsView.tsx
-│   │   │       ├── QueryHistoryView.tsx
-│   │   │       └── SettingsView.tsx   # Connections & runtime modes
-│   │   ├── lib/
-│   │   │   ├── api.ts                 # API client with fallback resilience
-│   │   │   └── mockData.ts            # Enterprise mock datasets
-│   │   └── types/
-│   │       └── index.ts               # Complete TypeScript interfaces
-│   ├── package.json
-│   └── tsconfig.json
-└── README.md
+    ExecutiveCard --> User
 ```
 
 ---
 
-## 5. Installation & Running Locally
+## 4. Governed Semantic Metrics & Dimensions
+
+### Approved Measures
+| Semantic Measure | Cube Identifier | Formula / Aggregation | Description |
+| :--- | :--- | :--- | :--- |
+| **Revenue** | `Sales.revenue` | `SUM(revenue)` | Total recognized sales revenue across completed commercial transactions |
+| **Cost (COGS)** | `Sales.cost` | `SUM(cost)` | Direct product, shipping, and delivery expenses |
+| **Gross Profit** | `Sales.gross_profit` | `Revenue - Cost` | Operational earnings after deducting direct COGS |
+| **Gross Margin %** | `Sales.gross_margin` | `((Revenue - Cost) / Revenue) * 100` | Operational profitability efficiency percentage |
+| **Total Orders** | `Sales.order_count` | `COUNT(DISTINCT order_id)` | Total count of fulfilled sales orders |
+| **Average Order Value (AOV)** | `Sales.average_order_value` | `Revenue / Total Orders` | Average transaction basket size |
+| **Customer Count** | `Customers.customer_count` | `COUNT(DISTINCT customer_id)` | Unique enterprise customers served |
+| **Logistics Cost** | `Sales.logistics_cost` | `SUM(logistics_cost)` | Freight and supply-chain logistics surcharge |
+| **Material Cost** | `Sales.material_cost` | `SUM(material_cost)` | Direct bill of materials and fabrication cost |
+| **Operating Cost** | `Sales.operating_cost` | `SUM(operating_cost)` | Operating fulfillment expenses |
+
+### Approved Dimensions
+| Dimension | Cube Identifier | Description |
+| :--- | :--- | :--- |
+| **Region** | `Geography.region` | Operating theater (Europe, North America, India, APAC) |
+| **Country** | `Geography.country` | Sovereign jurisdiction / nation |
+| **Customer** | `Customers.customer_name` | Enterprise customer corporate name |
+| **Customer Segment** | `Customers.customer_segment` | Enterprise, Mid-Market, SMB |
+| **Product** | `Sales.product` | Software / hardware product line |
+| **Category** | `Sales.product_category` | High-level portfolio category |
+| **Order Date** | `Date.date` | Transaction calendar date |
+| **Quarter / Month** | `Date.quarter`, `Date.month` | Standard fiscal and calendar temporal dimensions |
+
+---
+
+## 5. AI Hallucination Firewall
+
+Before any query is transmitted to Cube or PostgreSQL, it must pass through the **AI Hallucination Firewall** (`src/lib/cube/cubeValidator.ts`).
+
+- **Measure Verification**: Checks measures against `ALLOWED_MEASURES`.
+- **Dimension Verification**: Checks dimensions against `ALLOWED_DIMENSIONS`.
+- **Operator Verification**: Validates allowed filter operators.
+- **Rogue Query Interception**: If the AI attempts to invent a metric (e.g., `"customer_profitability_score"` or `"employee happiness score"`):
+  - **The query is immediately blocked.**
+  - **Cube API is NOT CALLED.**
+  - Returns a clean error:
+    ```
+    "Metric 'customer_profitability_score' is not available in the governed semantic layer."
+    ```
+
+---
+
+## 6. Environment Variables
+
+Create `.env.local` inside the `frontend` folder:
+
+```bash
+# Semantic Layer Mode: "mock" (default, deterministic development adapter) or "cube" (live Cube.dev REST server)
+SEMANTIC_LAYER_MODE="mock"
+NEXT_PUBLIC_SEMANTIC_LAYER_MODE="mock"
+
+# Cube.dev Live REST API Credentials (Server-side ONLY. Never expose with NEXT_PUBLIC_)
+CUBE_API_URL="http://localhost:4000"
+CUBE_API_TOKEN="your_cube_jwt_secret_token"
+CUBEJS_API_URL="http://localhost:4000"
+CUBEJS_API_SECRET="your_cube_jwt_secret_token"
+
+# PostgreSQL Database Connection
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/metricmind"
+
+# Cost Governance Limits (Configurable)
+MAX_AGENT_STEPS=5
+MAX_QUERIES_PER_REQUEST=5
+MAX_RESULT_ROWS=1000
+MAX_DIMENSIONS=5
+MAX_MEASURES=10
+MAX_FILTERS=10
+MAX_QUERY_TIMEOUT_MS=10000
+```
+
+---
+
+## 7. API Flow & Endpoints
+
+### Primary Semantic Query Route: `POST /api/metricmind/query`
+
+**Request:**
+```json
+{
+  "question": "Show Q3 revenue by region"
+}
+```
+
+**Flow:**
+1. Receives question.
+2. Sends question to Agentic Orchestrator.
+3. Generates structured Cube Query JSON (`{"measures": ["Sales.revenue"], "dimensions": ["Geography.region"]}`).
+4. Validates query through AI Hallucination Firewall.
+5. Sends query to Cube REST API (`POST /cubejs-api/v1/load`).
+6. Receives structured result set.
+7. Generates evidence-backed, non-causal AI explanation.
+8. Records governance audit entry.
+9. Returns structured response.
+
+**Response:**
+```json
+{
+  "question": "Show Q3 revenue by region",
+  "intent": "Revenue Analysis",
+  "metric": "Revenue",
+  "dimensions": ["region"],
+  "timeRange": "Q3 2026",
+  "semanticQuery": {
+    "measures": ["Sales.revenue"],
+    "dimensions": ["Geography.region"],
+    "limit": 100
+  },
+  "validation": {
+    "valid": true,
+    "firewall": "passed",
+    "governed_signature": "CUBE-LIVE-ABC123"
+  },
+  "source": "Cube.dev Live REST API",
+  "data": [
+    { "Geography.region": "Europe", "Sales.revenue": 158000000 },
+    { "Geography.region": "North America", "Sales.revenue": 142000000 },
+    { "Geography.region": "India", "Sales.revenue": 124200000 },
+    { "Geography.region": "APAC", "Sales.revenue": 62000000 }
+  ],
+  "explanation": "Regional distribution for Revenue shows Europe leading with ₹15.80 Cr...",
+  "governance": {
+    "firewall": "passed",
+    "semantic_validation": "passed",
+    "status": "APPROVED"
+  }
+}
+```
+
+---
+
+## 8. How to Run the Project
 
 ### Prerequisites
-- Node.js (v18+ or v20+)
-- Python (v3.10+ or v3.12+)
+- Node.js 18+ (tested on Node 20 / 22)
+- npm or pnpm
+- (Optional) PostgreSQL 15+ and Cube.dev CLI (`npm install -g cubejs-cli`)
 
-### 1. Run the Backend (FastAPI)
-```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-*The backend automatically seeds the analytical warehouse and binds to `http://localhost:8000`.*
+### Quick Start (Development / Mock Mode)
+MetricMind includes a deterministic, production-grade development adapter so you can run and test the complete system with zero database dependencies:
 
-### 2. Run the Frontend (Next.js)
 ```bash
+# 1. Install frontend dependencies
 cd frontend
 npm install
+
+# 2. Run the Next.js development server
 npm run dev
 ```
-*Open `http://localhost:3000` in your browser.*
+
+Open `http://localhost:3000` in your browser.
+
+### Running with a Live Cube Server
+If you have Cube deployed or want to run Cube locally:
+
+```bash
+# 1. Set up PostgreSQL
+psql -U postgres -d metricmind -f database/schema.sql
+psql -U postgres -d metricmind -f database/seed.sql
+
+# 2. Start the Cube.dev server
+cd cube
+npm install
+npm run dev # Starts Cube on port 4000
+
+# 3. Configure frontend to use live Cube
+# In frontend/.env.local:
+SEMANTIC_LAYER_MODE="cube"
+CUBE_API_URL="http://localhost:4000"
+CUBE_API_TOKEN="your_jwt_token"
+```
 
 ---
 
-## 6. Primary Demo Walkthrough
+## 9. Google Authentication Setup
 
-### Test Scenario: "Why did our European margins drop last quarter?"
-1. Open **Ask MetricMind** from the sidebar or click the prompt pill.
-2. Observe the **12-Step Agentic Reasoning UI**:
-   - Understand intent: Variance Driver Analysis
-   - Identify metric: `Gross Margin %` (`((Revenue - Cost) / Revenue) * 100`)
-   - Identify filters: `region = 'Europe'`, `period = 'Q2 2026'`
-   - Query through semantic layer (Zero Rogue SQL)
-   - Perform variance and cost driver statistical decomposition
-3. Inspect the **Executive Response Card**:
-   - **Summary**: Contraction from 31.4% to 27.2% (-4.2 pp).
-   - **Primary Drivers**: Logistics Surge (+38.4%) and Hardware COGS (+24.1%).
-   - **Regional Vectors**: Spain contributed largest drag (-1.7 pp), followed by Germany (-1.1 pp), France (-0.8 pp), and Italy (-0.6 pp).
-   - **Interactive Chart**: Driver Waterfall Bridge.
-   - **Governed Evidence Table**: Cryptographic signature `MM-SIG-GOV-EUR-88A9F`.
-   - **Explainability Drawer**: Full formula, dbt source mart, and owner signoff.
+MetricMind supports enterprise Google Gmail / Google OAuth 2.0 single sign-on alongside traditional email/password and demo mode.
 
-### Additional Demo Questions
-- *"What was our revenue growth this year?"*
-- *"Which region has the highest margin?"*
-- *"Which products are driving profit?"*
-- *"Compare Europe and Asia."*
-- *"Show me our churn trend."*
+### 1. Google Cloud Console Configuration
+1. Open [Google Cloud Console](https://console.cloud.google.com/) and create or select your project (`MetricMind`).
+2. Configure the **OAuth consent screen** (App Name: `MetricMind`, Scopes: `email`, `profile`, `openid`).
+3. Under **Credentials** → **Create Credentials** → **OAuth Client ID** (Web application).
+4. Add the following URIs:
+   - **Authorized JavaScript origins**: `http://localhost:3000`
+   - **Authorized redirect URI**: `http://localhost:3000/api/auth/google/callback`
+
+### 2. Configure Local Environment
+Add your credentials to `frontend/.env.local`:
+```env
+GOOGLE_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET="your_google_client_secret"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+```
+
+For complete instructions and production deployment guidelines, see [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md).
 
 ---
 
-## 7. Zero Rogue SQL Security Guarantee
+## 10. Testing & Verification
 
-MetricMind enforces that all AI interactions must resolve against governed semantic metrics. Direct SQL generation from user prompts to warehouse tables is prohibited to prevent metric drift, incorrect aggregations, and security leaks.
+MetricMind provides two automated test suites covering all acceptance requirements:
+
+### 1. Cube Semantic Layer Integration Tests
+Tests all 8 demo queries from Section 14 and verifies that unapproved metrics are blocked:
+```bash
+cd frontend
+npx tsx src/lib/cube/__tests__/runCubeIntegrationTests.ts
+```
+Expected output: **9/9 Tests Passed, 0 Failed.**
+
+### 2. Multi-Step Reasoning & Governance Tests
+Tests multi-step analysis, ECharts dynamic visual selection, query budget limits, and cache hits:
+```bash
+cd frontend
+npx tsx src/lib/services/__tests__/runAcceptanceTests.ts
+```
+Expected output: **10/10 Tests Passed, 0 Failed.**
+
+---
+
+## 11. Demo Queries to Try in the UI
+
+1. `"What is our total revenue?"` → Returns single KPI card (₹48.62 Cr) sourced from `Sales.revenue`.
+2. `"Show revenue by region."` → Returns Bar chart with European, North American, Indian, and APAC breakdown.
+3. `"Show Q3 revenue."` → Returns Line chart / Quarterly aggregation.
+4. `"Compare Q3 revenue with Q2."` → Returns multi-period time-series comparison.
+5. `"What is the gross margin?"` → Returns 27.2% with governed formula `((Revenue - Cost) / Revenue) * 100`.
+6. `"Show gross margin by region."` → Returns regional margin comparison.
+7. `"Why did European margins drop last quarter?"` → Triggers multi-step driver analysis, Waterfall variance bridge, and cost breakdown.
+8. `"Which region generated the highest revenue?"` → Returns ranked Europe revenue at ₹15.80 Cr.
+9. `"Show employee happiness score."` → Intercepted by the **AI Hallucination Firewall** (Cube API NOT called).

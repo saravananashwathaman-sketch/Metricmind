@@ -1,23 +1,18 @@
 import { NextResponse } from "next/server";
-import { executeDatabaseQuery } from "@/lib/db";
+import { queryCube } from "@/lib/cube";
 
 export async function GET() {
   try {
-    const sql = `
-      SELECT 
-        continent,
-        country,
-        ROUND(SUM(revenue), 2) AS revenue,
-        ROUND(SUM(cost), 2) AS cost
-      FROM semantic_sales
-      GROUP BY continent, country
-      ORDER BY revenue DESC;
-    `;
-    const res = await executeDatabaseQuery(sql);
+    const res = await queryCube({
+      measures: ["Sales.revenue", "Sales.cost"],
+      dimensions: ["Geography.region", "Geography.country"]
+    });
+
     return NextResponse.json({
       metric: "revenue",
-      formula: "SUM(quantity * unit_price * (1 - discount/100))",
-      data: res.rows
+      formula: "SUM(fct_sales.revenue)",
+      source: res.metadata.source,
+      data: res.data
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

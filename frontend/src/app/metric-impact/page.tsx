@@ -1,6 +1,6 @@
 "use client";
 
-import { MetricMindApp } from "@/app/page";
+import { MetricMindApp } from "@/components/MetricMindApp";
 
 export default function MetricImpactPage() {
   return <MetricMindApp initialTab="metric-impact" />;

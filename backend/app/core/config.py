@@ -24,10 +24,21 @@ class Settings(BaseModel):
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "llama3-70b-instruct")
     
-    # Semantic Layer
+    # Semantic Layer & Cube.dev
+    semantic_layer_mode: str = os.getenv("SEMANTIC_LAYER_MODE", "mock")  # "mock" or "cube"
     semantic_layer_type: str = os.getenv("SEMANTIC_LAYER_TYPE", "governed_mock")
-    cube_api_url: str = os.getenv("CUBE_API_URL", "")
-    cube_api_secret: str = os.getenv("CUBE_API_SECRET", "")
+    cube_api_url: str = os.getenv("CUBE_API_URL", os.getenv("CUBEJS_API_URL", "http://localhost:4000"))
+    cube_api_secret: str = os.getenv("CUBE_API_SECRET", os.getenv("CUBEJS_API_SECRET", ""))
+
+    # Cost Governance & Query Limits
+    max_agent_steps: int = int(os.getenv("MAX_AGENT_STEPS", "5"))
+    max_queries_per_request: int = int(os.getenv("MAX_QUERIES_PER_REQUEST", "5"))
+    max_result_rows: int = int(os.getenv("MAX_RESULT_ROWS", "1000"))
+    max_dimensions: int = int(os.getenv("MAX_DIMENSIONS", "5"))
+    max_measures: int = int(os.getenv("MAX_MEASURES", "10"))
+    max_filters: int = int(os.getenv("MAX_FILTERS", "10"))
+    max_time_range_days: int = int(os.getenv("MAX_TIME_RANGE_DAYS", "1095"))
+    max_query_timeout_ms: int = int(os.getenv("MAX_QUERY_TIMEOUT_MS", "10000"))
     
     # Database
     database_url: str = os.getenv("DATABASE_URL", "sqlite:///./metricmind_dw.db")

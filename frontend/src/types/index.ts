@@ -15,6 +15,7 @@ export interface AuthUser {
   department?: string;
   organization?: string;
   avatar_url?: string | null;
+  auth_provider?: "email" | "google" | "demo" | string;
 }
 
 export interface AuthSession {
@@ -74,6 +75,7 @@ export interface UserProfile {
   date_format: string;
   default_dashboard: string;
   avatar_url?: string | null;
+  auth_provider?: "email" | "google" | "demo" | string;
   account_created: string;
   last_active: string;
   active_sessions_count: number;
@@ -166,6 +168,85 @@ export interface KPIComparison {
 export * from "./firewall";
 import { FirewallDecision, FirewallBlockedCard } from "./firewall";
 
+export interface VisualizationPayload {
+  type: "line" | "bar" | "donut" | "pie" | "waterfall" | "scatter" | "kpi" | "kpi_grid" | "horizontal_bar" | "histogram";
+  title: string;
+  subtitle?: string;
+  xAxis?: string;
+  yAxis?: string;
+  data: any[];
+  unit?: string;
+  series?: { name: string; dataKey?: string; color?: string }[];
+}
+
+export interface MultiStepAnalysisStep {
+  step: number;
+  type: string;
+  title: string;
+  status: "completed" | "in_progress" | "pending" | "failed" | "skipped";
+  detail?: string;
+  query_index?: number;
+  duration_ms?: number;
+}
+
+export interface MultiStepAnswer {
+  summary: string;
+  metric: string;
+  metric_name?: string;
+  value: number | string;
+  baseline_value?: number | string;
+  change: number | string;
+  change_unit?: string;
+  evidence_summary?: string;
+}
+
+export interface QueryBudgetInfo {
+  count: number;
+  limit: number;
+  remaining: number;
+  status: "approved" | "exceeded";
+}
+
+export interface GovernanceMetadata {
+  firewall: "passed" | "blocked";
+  cost_limit: "passed" | "blocked";
+  semantic_validation: "passed" | "blocked";
+  query_budget: "passed" | "exceeded";
+  complexity?: "Low" | "Medium" | "High";
+  cache_hit?: boolean;
+}
+
+export interface ApiCallInfo {
+  endpoint: string;
+  method: "POST" | "GET";
+  payload: any;
+  status_code: number;
+  execution_time_ms: number;
+  result_rows: number;
+  sanitized: boolean;
+}
+
+export interface SqlExecutionInfo {
+  source: string;
+  sql_generated_by_llm: "NONE";
+  sql: string | null;
+  available: boolean;
+  message?: string;
+}
+
+export interface GovernanceAuditRecord {
+  request_id: string;
+  user: string;
+  question: string;
+  queries_executed: string;
+  execution_time_ms: number;
+  result_rows: number;
+  query_complexity: "Low" | "Medium" | "High";
+  status: "APPROVED" | "BLOCKED";
+  cache_hit: boolean;
+  timestamp: string;
+}
+
 export interface MetricMindChatResponse {
   conversation_id: string;
   question: string;
@@ -187,6 +268,22 @@ export interface MetricMindChatResponse {
   _trace?: any;
   firewall_decision?: FirewallDecision;
   blocked_card?: FirewallBlockedCard;
+
+  // Advanced Agent Upgrade Fields (Part 1 - 5)
+  answer?: MultiStepAnswer;
+  analysis?: {
+    steps: MultiStepAnalysisStep[];
+    workflow?: string[];
+    max_steps_reached?: boolean;
+  };
+  queries?: QueryBudgetInfo;
+  semantic_query?: any;
+  api_call?: ApiCallInfo;
+  sql_info?: SqlExecutionInfo;
+  visualization?: VisualizationPayload;
+  governance?: GovernanceMetadata;
+  audit_record?: GovernanceAuditRecord;
+  cached?: boolean;
 }
 
 export interface MetricDefinition {

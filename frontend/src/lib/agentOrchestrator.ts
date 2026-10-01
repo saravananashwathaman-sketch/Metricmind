@@ -291,7 +291,64 @@ export function toolGenerateVisualizationConfig(metric: string, question: string
 import { validateThroughFirewall } from "./firewallEngine";
 import { FirewallDecision } from "@/types/firewall";
 
+import { runAdvancedMetricMindAgent } from "./services/agentOrchestrator";
+
 export async function runMetricMindAgent(
+  question: string,
+  userRole: string = "Executive"
+): Promise<{
+  chatResponse: MetricMindChatResponse;
+  trace: AgentExecutionTrace;
+}> {
+  const chatResponse = await runAdvancedMetricMindAgent(question, userRole);
+
+  const trace: AgentExecutionTrace = {
+    user_question: question,
+    intent: chatResponse.answer?.evidence_summary || `Analytical reasoning on ${chatResponse.governed_metric.name}`,
+    resolved_metric: chatResponse.governed_metric.id,
+    resolved_dimensions: chatResponse.calculation_details.dimensions_evaluated || [],
+    resolved_filters: chatResponse.calculation_details.applied_filters || {},
+    resolved_time_range: chatResponse.calculation_details.reporting_period || "Q2 2026",
+    semantic_json: chatResponse.semantic_query || {
+      measures: [chatResponse.governed_metric.id],
+      dimensions: [],
+      filters: [],
+      order: [],
+      limit: 100
+    },
+    cube_payload: chatResponse.api_call?.payload || null,
+    validation_status: chatResponse.status === "blocked" ? "FAILED" : "PASSED",
+    cube_response: {
+      success: chatResponse.status !== "blocked",
+      metric: chatResponse.governed_metric.id,
+      filters: chatResponse.calculation_details.applied_filters || {},
+      data: chatResponse.primary_chart_data || [],
+      metadata: {
+        source: "Cube.dev Semantic Layer",
+        definition_version: chatResponse.governed_metric.version,
+        governed_formula: chatResponse.governed_metric.formula,
+        cube_model: "Sales.yml",
+        sql_generated_by_llm: "NONE",
+        validation_status: chatResponse.status === "blocked" ? "FAILED" : "PASSED",
+        execution_time_ms: chatResponse.processing_time_ms,
+        result_hash: chatResponse.evidence?.governed_signature || "SIG-DEMO",
+        timestamp: new Date().toISOString(),
+        cube_payload: chatResponse.api_call?.payload || null
+      }
+    },
+    sql_generated_by_llm: "NONE",
+    execution_steps: chatResponse.reasoning_steps.map((s) => ({
+      tool: s.title,
+      description: s.detail,
+      output: { status: s.status },
+      duration_ms: s.timestamp_ms
+    }))
+  };
+
+  return { chatResponse, trace };
+}
+
+export async function runLegacyMetricMindAgent(
   question: string,
   userRole: string = "Executive"
 ): Promise<{

@@ -15,6 +15,8 @@ export interface StoredUser {
   status: "active" | "pending" | "suspended";
   email_verified: boolean;
   initials: string;
+  avatar_url?: string | null;
+  auth_provider?: "email" | "google" | "demo" | string;
   created_at: string;
   updated_at: string;
 }
@@ -295,6 +297,64 @@ export function sanitizeUser(user: StoredUser): AuthUser & {
     department: user.department,
     organization: user.organization,
     status: user.status,
+    avatar_url: user.avatar_url,
+    auth_provider: user.auth_provider || "email",
     created_at: user.created_at
   };
+}
+
+export interface GoogleUserProfile {
+  sub: string;
+  name: string;
+  email: string;
+  picture?: string;
+  email_verified?: boolean;
+}
+
+export function upsertGoogleUser(googleProfile: GoogleUserProfile): StoredUser {
+  const store = getUserStore();
+  const cleanEmail = googleProfile.email.trim().toLowerCase();
+  const cleanName = googleProfile.name.trim() || cleanEmail.split("@")[0];
+  const parts = cleanName.split(/\s+/).filter(Boolean);
+  const initials = parts.slice(0, 2).map((p) => p[0].toUpperCase()).join("") || "G";
+
+  const existing = store.get(cleanEmail);
+  if (existing) {
+    // Account Linking: update profile picture, verify email, set provider
+    existing.name = cleanName || existing.name;
+    existing.email_verified = true;
+    if (googleProfile.picture) {
+      existing.avatar_url = googleProfile.picture;
+    }
+    existing.auth_provider = "google";
+    existing.updated_at = new Date().toISOString();
+    store.set(cleanEmail, existing);
+    return existing;
+  }
+
+  // Create new user for Google login
+  const domainPart = cleanEmail.split("@")[1] || "enterprise.com";
+  const orgName = domainPart.replace(/\.[^/.]+$/, "").toUpperCase();
+
+  const newUser: StoredUser = {
+    id: `usr_g_${googleProfile.sub || Date.now().toString(36)}`,
+    name: cleanName,
+    email: cleanEmail,
+    password_hash: "OAUTH_GOOGLE_MANAGED",
+    salt: "OAUTH_SALT",
+    organization: orgName === "GMAIL" || orgName === "YAHOO" ? "MetricMind Enterprise" : orgName,
+    job_title: "Executive Vice President",
+    department: "Enterprise Analytics",
+    role: "Executive",
+    status: "active",
+    email_verified: true,
+    initials,
+    avatar_url: googleProfile.picture,
+    auth_provider: "google",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  };
+
+  store.set(cleanEmail, newUser);
+  return newUser;
 }

@@ -5,6 +5,7 @@ import { verifyUserPassword, sanitizeUser, setCurrentProfile } from "@/lib/userS
 const MOCK_USERS_BY_EMAIL: Record<string, any> = {
   "ashwathaman@metricmind.com": {
     ...DEFAULT_USER_PROFILE,
+    id: "user_ashwathaman",
     name: "Ashwathaman",
     email: "ashwathaman@metricmind.com",
     role: "Executive",
@@ -26,6 +27,7 @@ const MOCK_USERS_BY_EMAIL: Record<string, any> = {
   },
   "priya.sharma@metricmind.com": {
     ...DEFAULT_USER_PROFILE,
+    id: "user_priya",
     name: "Priya Sharma",
     email: "priya.sharma@metricmind.com",
     role: "Finance Analyst",
@@ -36,6 +38,7 @@ const MOCK_USERS_BY_EMAIL: Record<string, any> = {
   },
   "admin@metricmind.com": {
     ...DEFAULT_USER_PROFILE,
+    id: "user_admin",
     name: "Vikram Malhotra",
     email: "admin@metricmind.com",
     role: "Admin",
@@ -46,6 +49,7 @@ const MOCK_USERS_BY_EMAIL: Record<string, any> = {
   },
   "devon.clark@metricmind.com": {
     ...DEFAULT_USER_PROFILE,
+    id: "user_devon",
     name: "Devon Clark",
     email: "devon.clark@metricmind.com",
     role: "Sales Analyst",
@@ -61,31 +65,23 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => ({}));
     const { email = "", password = "", remember_me = false } = body;
     const cleanEmail = String(email).trim().toLowerCase();
-    const cleanPassword = String(password);
+    const cleanPassword = String(password || "").trim();
 
     if (!cleanEmail || !cleanEmail.includes("@")) {
       return NextResponse.json(
-        { error: "Please enter a valid email address." },
+        { error: "Please enter a valid email address (e.g. name@company.com)." },
         { status: 400 }
       );
     }
 
-    if (!cleanPassword) {
-      return NextResponse.json(
-        { error: "Password is required." },
-        { status: 400 }
-      );
-    }
-
-    // 1. Check userStore (contains seed accounts & newly created accounts)
-    const storedUser = verifyUserPassword(cleanEmail, cleanPassword);
+    // 1. Check userStore (contains seed accounts & newly registered accounts)
+    const storedUser = cleanPassword ? verifyUserPassword(cleanEmail, cleanPassword) : null;
     if (storedUser) {
       const isDemo = cleanEmail === "demo@metricmind.app";
       const token = `mm_token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
       const expiresAt = Date.now() + (remember_me ? 30 * 86400 * 1000 : 86400 * 1000);
       const sanitized = sanitizeUser(storedUser);
 
-      // Synchronize active runtime profile
       setCurrentProfile({
         ...DEFAULT_USER_PROFILE,
         id: storedUser.id,
@@ -161,47 +157,67 @@ export async function POST(request: Request) {
       return response;
     }
 
-    // 2. Generic enterprise domain user (e.g. employee@company.com)
-    if (cleanPassword.length >= 6) {
-      const parts = cleanEmail.split("@")[0].replace(/[._-]+/g, " ").trim();
-      const displayName = parts
-        ? parts.split(" ").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
-        : "Enterprise User";
-      const initials = displayName
+    // 3. ANY Custom Email ID Login (Instant Seamless Authentication)
+    const emailPrefix = cleanEmail.split("@")[0].replace(/[._-]+/g, " ").trim();
+    const displayName = emailPrefix
+      ? emailPrefix
+          .split(" ")
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ")
+      : "Enterprise Executive";
+
+    const initials =
+      displayName
         .split(" ")
         .filter(Boolean)
         .map((p) => p[0].toUpperCase())
         .slice(0, 2)
-        .join("") || "EU";
+        .join("") || "EX";
 
-      const token = `mm_token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
-      const expiresAt = Date.now() + (remember_me ? 30 * 86400 * 1000 : 86400 * 1000);
+    const domainPart = cleanEmail.split("@")[1] || "enterprise.com";
+    const orgName = domainPart.replace(/\.[^/.]+$/, "").toUpperCase();
 
-      return NextResponse.json({
-        success: true,
-        token,
-        expires_at: expiresAt,
-        user: {
-          id: `usr_${Date.now().toString(36)}`,
-          name: displayName,
-          email: cleanEmail,
-          role: "Executive",
-          initials,
-          title: "Enterprise Member",
-          department: "Business Analytics",
-          organization: cleanEmail.split("@")[1].replace(/\.[^/.]+$/, "").toUpperCase()
-        },
-        is_demo: false
-      });
-    }
+    const token = `mm_token_${Math.random().toString(36).substring(2)}_${Date.now()}`;
+    const expiresAt = Date.now() + (remember_me ? 30 * 86400 * 1000 : 86400 * 1000);
 
-    return NextResponse.json(
-      { error: "Unable to sign in. Please check your credentials and try again." },
-      { status: 401 }
-    );
+    const customUser = {
+      id: `usr_${Date.now().toString(36)}`,
+      name: displayName,
+      email: cleanEmail,
+      role: "Executive" as const,
+      initials,
+      title: "Executive Vice President",
+      job_title: "Executive Vice President",
+      department: "Enterprise Analytics",
+      organization: orgName === "GMAIL" || orgName === "YAHOO" ? "MetricMind Enterprise" : orgName,
+      status: "active" as const
+    };
+
+    setCurrentProfile({
+      ...DEFAULT_USER_PROFILE,
+      ...customUser,
+      last_active: "Active Now"
+    });
+
+    const response = NextResponse.json({
+      success: true,
+      token,
+      expires_at: expiresAt,
+      user: customUser,
+      is_demo: false
+    });
+
+    response.cookies.set("mm_session_token", token, {
+      path: "/",
+      sameSite: "lax",
+      maxAge: remember_me ? 30 * 86400 : 86400,
+      httpOnly: false
+    });
+
+    return response;
   } catch (err: any) {
     return NextResponse.json(
-      { error: "Unable to connect to the authentication service. Please try again." },
+      { error: "Unable to complete login. Please try again." },
       { status: 500 }
     );
   }

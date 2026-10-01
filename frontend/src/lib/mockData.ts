@@ -386,7 +386,134 @@ export const DEFAULT_EUROPE_MARGIN_RESPONSE: MetricMindChatResponse = {
     "How did Enterprise SaaS product margins perform in Germany?",
     "Compare Europe margins against India and North America.",
     "What actions can restore European gross margin to 31% in Q3?"
-  ]
+  ],
+  answer: {
+    summary:
+      "European gross margin decreased by 4.2 percentage points. The secondary analysis shows that increased logistics and material costs were major contributing factors.",
+    metric: "gross_margin",
+    metric_name: "Gross Margin %",
+    value: 27.2,
+    baseline_value: 31.4,
+    change: -4.2,
+    change_unit: "pp",
+    evidence_summary: "Governed multi-step variance decomposition for European Gross Margin"
+  },
+  analysis: {
+    steps: [
+      { step: 1, type: "intent_resolution", title: "Intent identified", status: "completed", detail: "Analytical intent resolved for Gross Margin" },
+      { step: 2, type: "metric_resolution", title: "Gross Margin resolved", status: "completed", detail: "Governed measure resolved from Semantic Catalog" },
+      { step: 3, type: "primary_query", title: "Primary metric retrieved", status: "completed", detail: "Retrieved Q1 (31.4%) and Q2 (27.2%) aggregates" },
+      { step: 4, type: "variance_detection", title: "Margin decline detected", status: "completed", detail: "Detected -4.2 pp variance below baseline" },
+      { step: 5, type: "driver_trigger", title: "Driver analysis triggered", status: "completed", detail: "Governed cost metrics evaluated in semantic schema" },
+      { step: 6, type: "cost_breakdown", title: "Cost breakdown retrieved", status: "completed", detail: "Logistics (+18%), Material (+11%), and Operating (+6%) costs evaluated" },
+      { step: 7, type: "geo_analysis", title: "Country contribution analyzed", status: "completed", detail: "Spain (-1.7 pp) and Germany (-1.1 pp) identified as key drag contributors" },
+      { step: 8, type: "synthesis", title: "Final explanation generated", status: "completed", detail: "Evidence-based non-causal synthesis rendered" }
+    ],
+    workflow: [
+      "Intent Detection",
+      "Metric Resolution",
+      "Primary Query",
+      "Result Analysis",
+      "Decline Detection",
+      "Secondary Breakdown Query",
+      "Driver Comparison",
+      "Root-Cause Summary",
+      "Dynamic Visualization"
+    ]
+  },
+  queries: {
+    count: 3,
+    limit: 5,
+    remaining: 2,
+    status: "approved"
+  },
+  semantic_query: {
+    measures: ["gross_margin"],
+    dimensions: [],
+    time_dimension: "date",
+    time_granularity: "quarter",
+    time_range: "previous_quarter",
+    filters: [
+      {
+        member: "region",
+        operator: "equals",
+        values: ["Europe"]
+      }
+    ],
+    limit: 100
+  },
+  api_call: {
+    endpoint: "POST /cubejs-api/v1/load",
+    method: "POST",
+    payload: {
+      query: {
+        measures: ["Sales.gross_margin"],
+        dimensions: [],
+        timeDimensions: [
+          {
+            dimension: "Date.date",
+            granularity: "quarter",
+            dateRange: "previous_quarter"
+          }
+        ],
+        filters: [
+          {
+            member: "Geography.region",
+            operator: "equals",
+            values: ["Europe"]
+          }
+        ],
+        limit: 100
+      }
+    },
+    status_code: 200,
+    execution_time_ms: 245,
+    result_rows: 4,
+    sanitized: true
+  },
+  sql_info: {
+    source: "Cube Semantic Layer",
+    sql_generated_by_llm: "NONE",
+    sql: null,
+    available: false,
+    message: "SQL preview is unavailable for this semantic query. The request was executed through the Cube Semantic Layer."
+  },
+  visualization: {
+    type: "waterfall",
+    title: "Gross Margin Variance Driver Bridge",
+    subtitle: "European margin decline decomposed by contributing cost and country drivers",
+    xAxis: "name",
+    yAxis: "value",
+    unit: "%",
+    data: [
+      { name: "Q1 Baseline", fullName: "Q1 2026 Baseline Starting Margin", value: 31.4, isTotal: true },
+      { name: "Logistics", fullName: "Logistics Surcharge Surge", value: -2.3 },
+      { name: "Raw Materials", fullName: "Hardware & Component Inflation", value: -1.4 },
+      { name: "Core COGS", fullName: "Core Delivery Infrastructure Drag", value: -0.4 },
+      { name: "Cloud Infra", fullName: "Cloud Bandwidth & Infra Scaling", value: -0.1 },
+      { name: "Q2 Margin", fullName: "Q2 2026 Ending Margin", value: 27.2, isTotal: true }
+    ]
+  },
+  governance: {
+    firewall: "passed",
+    cost_limit: "passed",
+    semantic_validation: "passed",
+    query_budget: "passed",
+    complexity: "Low",
+    cache_hit: false
+  },
+  audit_record: {
+    request_id: "REQ-29381",
+    user: "Executive",
+    question: "Why did our European margins drop last quarter?",
+    queries_executed: "3 / 5",
+    execution_time_ms: 342.5,
+    result_rows: 24,
+    query_complexity: "Low",
+    status: "APPROVED",
+    cache_hit: false,
+    timestamp: "2026-10-01T18:00:00Z"
+  }
 };
 
 export const DEFAULT_LINEAGE_DATA: LineageGraphData = {

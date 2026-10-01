@@ -219,8 +219,8 @@ export async function executeCubeQuery(
     process.env.NEXT_PUBLIC_SEMANTIC_LAYER_MODE ||
     "mock";
 
-  const cubeApiUrl = process.env.CUBEJS_API_URL;
-  const cubeApiSecret = process.env.CUBEJS_API_SECRET;
+  const cubeApiUrl = process.env.CUBE_API_URL || process.env.CUBEJS_API_URL;
+  const cubeApiSecret = process.env.CUBE_API_TOKEN || process.env.CUBEJS_API_SECRET;
 
   if (mode === "cube" && cubeApiUrl) {
     try {
@@ -422,3 +422,6 @@ export async function runRepeatabilityTest(
     data_snapshot_id: "SNAP-FIN-2026Q3-FIXED"
   };
 }
+
+// Re-export dedicated Cube semantic layer services
+export * from "./cube";

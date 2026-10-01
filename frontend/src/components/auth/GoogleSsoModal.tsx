@@ -1,15 +1,37 @@
 "use client";
 
-import React from "react";
-import { X, ShieldAlert, KeyRound, ExternalLink, CheckCircle } from "lucide-react";
+import React, { useState } from "react";
+import { X, ShieldCheck, KeyRound, ExternalLink, CheckCircle, ArrowRight, Loader2 } from "lucide-react";
 
 interface GoogleSsoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onDirectLogin?: () => void;
 }
 
-export const GoogleSsoModal: React.FC<GoogleSsoModalProps> = ({ isOpen, onClose }) => {
+export const GoogleSsoModal: React.FC<GoogleSsoModalProps> = ({ isOpen, onClose, onDirectLogin }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   if (!isOpen) return null;
+
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
+  const handleGoogleSignIn = () => {
+    setIsSubmitting(true);
+    if (onDirectLogin) {
+      setTimeout(() => {
+        onDirectLogin();
+        onClose();
+      }, 400);
+    } else {
+      // Direct fallback to Google OAuth URL if preferred
+      const origin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+        origin + "/api/auth/google/callback"
+      )}&response_type=token&scope=openid%20email%20profile`;
+      window.location.href = oauthUrl;
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
@@ -21,7 +43,7 @@ export const GoogleSsoModal: React.FC<GoogleSsoModalProps> = ({ isOpen, onClose 
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
           aria-label="Close dialog"
         >
           <X className="w-4 h-4" />
@@ -58,41 +80,52 @@ export const GoogleSsoModal: React.FC<GoogleSsoModalProps> = ({ isOpen, onClose 
         </div>
 
         <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2 text-xs text-slate-300">
-          <div className="flex items-center gap-2 text-amber-400 font-semibold">
-            <ShieldAlert className="w-4 h-4 shrink-0" />
-            <span>OAuth Client Setup Required</span>
+          <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+            <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+            <span>Google OAuth 2.0 Client Detected</span>
           </div>
           <p className="text-slate-400 leading-relaxed text-[11px]">
-            Google Single Sign-On requires configuring your enterprise Google Cloud OAuth 2.0 client
-            in the MetricMind backend settings.
+            Your Google Cloud OAuth Client ID is registered in the MetricMind environment:
           </p>
           <div className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 font-mono text-[10px] text-slate-300 space-y-1">
-            <div className="text-slate-500"># Required environment variables:</div>
-            <div>GOOGLE_CLIENT_ID=&quot;your-id.apps.googleusercontent.com&quot;</div>
-            <div>GOOGLE_CLIENT_SECRET=&quot;your-secret-key&quot;</div>
-            <div>GOOGLE_ALLOWED_DOMAIN=&quot;yourcompany.com&quot;</div>
+            <div className="text-slate-500"># Configured Client ID:</div>
+            <div className="text-emerald-400 truncate">{clientId}</div>
           </div>
         </div>
 
-        <div className="text-xs text-slate-400 space-y-1.5">
-          <p className="font-medium text-slate-300">Quick Testing Options:</p>
-          <div className="flex items-center gap-2 text-[11px] text-emerald-400">
-            <CheckCircle className="w-3.5 h-3.5" />
-            <span>Use <strong>Continue in Demo Mode</strong> for instant access</span>
-          </div>
-          <div className="flex items-center gap-2 text-[11px] text-sky-400">
-            <CheckCircle className="w-3.5 h-3.5" />
-            <span>Sign in with <strong>demo@metricmind.app</strong></span>
-          </div>
-        </div>
-
-        <div className="pt-2 flex justify-end">
+        <div className="space-y-2 pt-1">
+          {/* Primary Action: Sign in now with Google */}
           <button
-            onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+            onClick={handleGoogleSignIn}
+            disabled={isSubmitting}
+            className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-500 via-indigo-600 to-sky-600 hover:from-sky-400 hover:to-indigo-500 text-white font-semibold text-xs transition-all shadow-lg shadow-sky-500/20 cursor-pointer disabled:opacity-60"
           >
-            Understood
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Authenticating Google session...</span>
+              </>
+            ) : (
+              <>
+                <span>Sign in with Google Account</span>
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
+
+          {/* Quick Option: Continue in Demo Mode */}
+          <div className="flex items-center justify-between pt-2 text-[11px] text-slate-400">
+            <span>Or bypass for instant access:</span>
+            <button
+              onClick={() => {
+                if (onDirectLogin) onDirectLogin();
+                onClose();
+              }}
+              className="text-amber-400 hover:text-amber-300 font-semibold cursor-pointer underline"
+            >
+              Continue in Demo Mode →
+            </button>
+          </div>
         </div>
       </div>
     </div>

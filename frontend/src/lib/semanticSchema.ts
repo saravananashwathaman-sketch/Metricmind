@@ -132,6 +132,57 @@ export const APPROVED_MEASURES: GovernedMeasure[] = [
     status: "Verified",
     version: "1.5.0",
     last_updated: "2026-08-30"
+  },
+  {
+    name: "logistics_cost",
+    technical_name: "Sales.logistics_cost",
+    display_name: "Logistics Cost",
+    description: "Freight, intermodal freight transport, cross-border distribution, and logistics surcharges",
+    formula: "SUM(logistics_cost)",
+    aggregation: "sum",
+    unit: "currency",
+    data_source: "fct_expenses",
+    dbt_model: "marts.finance.fct_expenses",
+    available_dimensions: ["region", "country", "quarter", "month", "sales_channel"],
+    time_dimensions: ["date", "month", "quarter", "year"],
+    owner: "Anand Verma (Director Financial Ops)",
+    status: "Verified",
+    version: "2.1.0",
+    last_updated: "2026-09-18"
+  },
+  {
+    name: "material_cost",
+    technical_name: "Sales.material_cost",
+    display_name: "Material Cost",
+    description: "Raw material procurement, fabrication components, and direct bill of materials inflation",
+    formula: "SUM(material_cost)",
+    aggregation: "sum",
+    unit: "currency",
+    data_source: "fct_expenses",
+    dbt_model: "marts.finance.fct_expenses",
+    available_dimensions: ["region", "country", "product_category", "quarter"],
+    time_dimensions: ["date", "month", "quarter", "year"],
+    owner: "Anand Verma (Director Financial Ops)",
+    status: "Verified",
+    version: "2.1.0",
+    last_updated: "2026-09-18"
+  },
+  {
+    name: "operating_cost",
+    technical_name: "Sales.operating_cost",
+    display_name: "Operating Cost",
+    description: "Direct regional operations, facility management, and delivery bandwidth expenses",
+    formula: "SUM(operating_cost)",
+    aggregation: "sum",
+    unit: "currency",
+    data_source: "fct_expenses",
+    dbt_model: "marts.finance.fct_expenses",
+    available_dimensions: ["region", "country", "quarter", "month"],
+    time_dimensions: ["date", "month", "quarter", "year"],
+    owner: "Anand Verma (Director Financial Ops)",
+    status: "Verified",
+    version: "2.1.0",
+    last_updated: "2026-09-18"
   }
 ];
 
